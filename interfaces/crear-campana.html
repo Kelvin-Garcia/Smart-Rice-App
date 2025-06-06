@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Campaña</title>
+    <link rel="stylesheet" href="styles-campana.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="header">
+                <h1 class="title">CREAR</h1>
+                <p class="subtitle">CAMPAÑA</p>
+            </div>
+            
+            <form id="crearCampana" class="form">
+                <div class="input-group">
+                    <label for="tipoArroz">
+                        <span class="icon">🌾</span>
+                        TIPO DE ARROZ
+                    </label>
+                    <div class="select-wrapper">
+                        <select id="tipoArroz" name="tipoArroz" required>
+                            <option value="">Seleccionar tipo de arroz</option>
+                            <option value="jasmine">Arroz Jasmine</option>
+                            <option value="basmati">Arroz Basmati</option>
+                            <option value="integral">Arroz Integral</option>
+                            <option value="blanco">Arroz Blanco</option>
+                            <option value="rojo">Arroz Rojo</option>
+                        </select>
+                        <span class="select-arrow">▼</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="cantidadSacos">
+                        <span class="icon">📦</span>
+                        CANTIDAD DE SACOS DE ARROZ?
+                    </label>
+                    <input type="number" id="cantidadSacos" name="cantidadSacos" min="1" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="precioSaco">
+                        <span class="icon">💰</span>
+                        PRECIO POR SACO (S/.)
+                    </label>
+                    <input type="number" id="precioSaco" name="precioSaco" min="0" step="0.01" required>
+                </div>
+                
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span class="icon">💧</span>
+                        PORCENTAJE DE HUMEDAD (%)
+                        <span class="slider-value" id="humedadValue">67%</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="humedadSlider" name="humedad" min="0" max="100" value="67" class="slider">
+                        <div class="slider-track"></div>
+                    </div>
+                </div>
+                
+                <div class="slider-group">
+                    <label class="slider-label">
+                        <span class="icon">🌾</span>
+                        PORCENTAJE DE QUEBRADO (%)
+                        <span class="slider-value" id="quebradoValue">32%</span>
+                    </label>
+                    <div class="slider-container">
+                        <input type="range" id="quebradoSlider" name="quebrado" min="0" max="100" value="32" class="slider">
+                        <div class="slider-track"></div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="cantidadMinima">
+                        <span class="icon">📊</span>
+                        CANTIDAD MÍNIMA DE SACOS
+                    </label>
+                    <input type="number" id="cantidadMinima" name="cantidadMinima" min="1" required>
+                </div>
+                
+                <button type="submit" class="submit-btn">CREAR CAMPAÑA</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const humedadSlider = document.getElementById('humedadSlider');
+            const humedadValue = document.getElementById('humedadValue');
+            const quebradoSlider = document.getElementById('quebradoSlider');
+            const quebradoValue = document.getElementById('quebradoValue');
+            const form = document.getElementById('crearCampana');
+            const submitBtn = document.querySelector('.submit-btn');
+            const inputs = document.querySelectorAll('input[type="number"], select');
+
+            // Función para actualizar el fondo del slider
+            function updateSliderBackground(slider) {
+                const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+                slider.style.background = `linear-gradient(to right, #399951 0%, #399951 ${value}%, #e1e1e1 ${value}%, #e1e1e1 100%)`;
+            }
+
+            // Funcionalidad para los sliders con animaciones mejoradas
+            humedadSlider.addEventListener('input', function() {
+                humedadValue.textContent = this.value + '%';
+                updateSliderBackground(this);
+                addSliderAnimation(this);
+            });
+
+            quebradoSlider.addEventListener('input', function() {
+                quebradoValue.textContent = this.value + '%';
+                updateSliderBackground(this);
+                addSliderAnimation(this);
+            });
+
+            // Animación para sliders
+            function addSliderAnimation(slider) {
+                slider.style.transform = 'scaleY(1.1)';
+                setTimeout(() => {
+                    slider.style.transform = 'scaleY(1)';
+                }, 150);
+            }
+
+            // Inicializar sliders
+            updateSliderBackground(humedadSlider);
+            updateSliderBackground(quebradoSlider);
+
+            // Validación en tiempo real
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    validateField(this);
+                });
+
+                input.addEventListener('focus', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.transition = 'transform 0.3s ease';
+                });
+
+                input.addEventListener('blur', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+
+            // Función de validación
+            function validateField(field) {
+                const value = field.value.trim();
+                
+                // Remover clases de validación previas
+                field.style.borderColor = '';
+                field.style.backgroundColor = '';
+                
+                if (value === '') {
+                    return;
+                }
+
+                let isValid = true;
+
+                if (field.type === 'number') {
+                    const numValue = parseFloat(value);
+                    isValid = !isNaN(numValue) && numValue > 0;
+                } else if (field.tagName === 'SELECT') {
+                    isValid = value !== '';
+                }
+
+                if (isValid) {
+                    field.style.borderColor = '#399951';
+                    field.style.backgroundColor = 'rgba(57, 153, 81, 0.05)';
+                    field.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        field.style.transform = 'scale(1)';
+                    }, 200);
+                } else {
+                    field.style.borderColor = '#dc3545';
+                    field.style.backgroundColor = 'rgba(220, 53, 69, 0.05)';
+                    // Animación de shake
+                    field.style.animation = 'shake 0.5s ease-in-out';
+                    setTimeout(() => {
+                        field.style.animation = '';
+                    }, 500);
+                }
+            }
+
+            // Manejo del envío del formulario
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validar todos los campos
+                let isFormValid = true;
+                inputs.forEach(input => {
+                    if (!input.value.trim()) {
+                        isFormValid = false;
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = 'rgba(220, 53, 69, 0.05)';
+                    }
+                });
+
+                if (!isFormValid) {
+                    showMessage('Por favor, completa todos los campos', 'error');
+                    return;
+                }
+
+                // Animación del botón de envío
+                submitBtn.style.transform = 'scale(0.95)';
+                submitBtn.textContent = 'CREANDO...';
+                submitBtn.disabled = true;
+                
+                // Simular proceso de creación
+                setTimeout(() => {
+                    submitBtn.style.transform = 'scale(1)';
+                    submitBtn.textContent = '✓ CAMPAÑA CREADA';
+                    submitBtn.style.backgroundColor = '#28a745';
+                    
+                    // Mostrar mensaje de éxito
+                    showMessage('¡Campaña creada exitosamente!', 'success');
+                    
+                    // Resetear formulario después de 3 segundos
+                    setTimeout(() => {
+                        resetForm();
+                    }, 3000);
+                }, 2000);
+            });
+
+            // Función para resetear el formulario
+            function resetForm() {
+                form.reset();
+                submitBtn.textContent = 'CREAR CAMPAÑA';
+                submitBtn.style.backgroundColor = '#399951';
+                submitBtn.disabled = false;
+                
+                // Resetear sliders
+                humedadSlider.value = 67;
+                quebradoSlider.value = 32;
+                humedadValue.textContent = '67%';
+                quebradoValue.textContent = '32%';
+                updateSliderBackground(humedadSlider);
+                updateSliderBackground(quebradoSlider);
+                
+                // Remover estilos de validación
+                inputs.forEach(input => {
+                    input.style.borderColor = '';
+                    input.style.backgroundColor = '';
+                });
+            }
+
+            // Función para mostrar mensajes
+            function showMessage(text, type) {
+                const message = document.createElement('div');
+                message.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem; font-weight: bold;">${type === 'success' ? '✓' : '⚠'}</span>
+                        <span>${text}</span>
+                    </div>
+                `;
+                
+                // Estilos del mensaje
+                const bgColor = type === 'success' ? '#399951' : '#dc3545';
+                message.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${bgColor};
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                    z-index: 1000;
+                    font-family: 'Onest', sans-serif;
+                    font-weight: 500;
+                    max-width: 300px;
+                    transform: translateX(100%);
+                    transition: transform 0.5s ease-out;
+                `;
+
+                document.body.appendChild(message);
+
+                // Animación de entrada
+                setTimeout(() => {
+                    message.style.transform = 'translateX(0)';
+                }, 10);
+
+                // Remover mensaje después de 4 segundos
+                setTimeout(() => {
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (document.body.contains(message)) {
+                            document.body.removeChild(message);
+                        }
+                    }, 500);
+                }, 4000);
+            }
+
+            // Animación inicial de los elementos del formulario
+            const formElements = document.querySelectorAll('.input-group, .slider-group, .submit-btn');
+            formElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Efecto de escritura en el título
+            const title = document.querySelector('.title');
+            const titleText = title.textContent;
+            title.textContent = '';
+            
+            titleText.split('').forEach((char, index) => {
+                setTimeout(() => {
+                    title.textContent += char;
+                }, index * 100);
+            });
+
+            // Efecto parallax sutil (solo en desktop)
+            if (window.innerWidth > 768) {
+                window.addEventListener('scroll', function() {
+                    const scrolled = window.pageYOffset;
+                    const formContainer = document.querySelector('.form-container');
+                    formContainer.style.transform = `translateY(${scrolled * 0.05}px)`;
+                });
+            }
+
+            // Agregar keyframes para animación shake usando JavaScript
+            const shakeKeyframes = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+            `;
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = shakeKeyframes;
+            document.head.appendChild(styleSheet);
+        });
+    </script>
+</body>
+</html>

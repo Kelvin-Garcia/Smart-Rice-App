@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Datos - Molino</title>
+    <link rel="stylesheet" href="styles-analisis.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="analisis-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Section -->
+            <div class="instructions-section">
+                <div class="instruction-card">
+                    <textarea 
+                        class="instruction-textarea" 
+                        placeholder="En este apartado ingresaremos los datos del análisis del arroz
+
+Sigue los pasos correctamente"
+                        readonly
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+    <button class="action-btn active" onclick="selectMode('individual')">
+        <div class="btn-icon-container">
+            <div class="btn-icon-border">
+                <span class="btn-icon-plus">➕</span>
+            </div>
+        </div>
+        <span class="btn-text">Crear Analisis</span>
+    </button>
+    <button class="action-btn" onclick="selectMode('reportes')">
+        <div class="btn-icon-container">
+            <div class="btn-icon-border">
+                <span class="btn-icon-plus">📋</span>
+            </div>
+        </div>
+        <span class="btn-text">Registros</span>
+    </button>
+</div>
+
+            <!-- Form Section -->
+            <div class="form-section" id="formSection">
+                <!-- Rice Type Dropdown -->
+                <div class="form-group">
+                    <label class="form-label">TIPO DE ARROZ</label>
+                    <div class="select-container">
+                        <select class="form-select" id="riceType">
+                            <option value="">Seleccionar tipo</option>
+                            <option value="extra">Extra</option>
+                            <option value="superior">Superior</option>
+                            <option value="corriente">Corriente</option>
+                            <option value="añejo">Añejo</option>
+                        </select>
+                        <span class="select-arrow">▼</span>
+                    </div>
+                </div>
+
+                <!-- Quantity Input -->
+                <div class="form-group">
+                    <label class="form-label">CANTIDAD DE SACOS DE ARROZ</label>
+                    <input 
+                        type="number" 
+                        class="form-input" 
+                        id="quantity"
+                        placeholder="Ingrese cantidad"
+                        min="1"
+                    >
+                </div>
+
+                <!-- Humidity Slider -->
+                <div class="form-group">
+                    <label class="form-label">PORCENTAJE DE HUMEDAD (%)</label>
+                    <div class="slider-container">
+                        <input 
+                            type="range" 
+                            class="form-slider" 
+                            id="humiditySlider"
+                            min="0" 
+                            max="100" 
+                            value="67"
+                        >
+                        <div class="slider-value" id="humidityValue">67%</div>
+                    </div>
+                </div>
+
+                <!-- Quebrado Slider -->
+                <div class="form-group">
+                    <label class="form-label">PORCENTAJE DE QUEBRADO (%)</label>
+                    <div class="slider-container">
+                        <input 
+                            type="range" 
+                            class="form-slider" 
+                            id="quebradoSlider"
+                            min="0" 
+                            max="100" 
+                            value="32"
+                        >
+                        <div class="slider-value" id="quebradoValue">32%</div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-section">
+                    <button class="submit-btn" onclick="generateAnalysis()">
+                        <span class="submit-text">SUBIR DATOS</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- QR Section -->
+            <div class="qr-section" id="qrSection" style="display: none;">
+                <div class="qr-card">
+                    <h3 class="qr-title">QR Generado con datos de análisis</h3>
+                    <div class="qr-code" id="qrCode">
+                        <div class="qr-pattern">
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                            <div class="qr-row">
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell white"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                                <div class="qr-cell black"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="qr-instruction">Escanea el código QR</p>
+                </div>
+            </div>
+
+            <!-- Analysis Report -->
+            <div class="report-section" id="reportSection" style="display: none;">
+                <div class="report-card">
+                    <div class="report-header">
+                        <h2 class="report-greeting">HOLA, <span id="userName">Mauricio Terrones Alayo</span></h2>
+                        <p class="report-code">Código <span id="userCode">223279</span></p>
+                    </div>
+                    
+                    <div class="report-content">
+                        <h3 class="report-title">Informe de análisis</h3>
+                        <div class="report-data">
+                            <div class="data-item">
+                                <span class="data-label">Tipo:</span>
+                                <span class="data-value" id="reportType">Extra</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Quebrado:</span>
+                                <span class="data-value" id="reportQuebrado">38%</span>
+                            </div>
+                            <div class="data-item">
+                                <span class="data-label">Humedad:</span>
+                                <span class="data-value" id="reportHumedad">25%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="ready-btn" onclick="finishAnalysis()">
+                        <span class="ready-text">LISTO</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✅</div>
+            <h3>¡Análisis Completado!</h3>
+            <p>Los datos han sido procesados correctamente y el QR ha sido generado.</p>
+            <button class="modal-btn primary" onclick="closeSuccessModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'individual';
+        let analysisData = {};
+
+        // Función para actualizar la fecha
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        // Función para seleccionar modo
+        function selectMode(mode) {
+            currentMode = mode;
+            
+            // Actualizar botones
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.action-btn').classList.add('active');
+            
+            if (mode === 'reportes') {
+                showNotification('Función de reportes próximamente disponible', 'info');
+            } else {
+                showNotification('Modo individual seleccionado', 'success');
+            }
+        }
+
+        // Función para actualizar sliders
+        function updateSliders() {
+            const humiditySlider = document.getElementById('humiditySlider');
+            const quebradoSlider = document.getElementById('quebradoSlider');
+            const humidityValue = document.getElementById('humidityValue');
+            const quebradoValue = document.getElementById('quebradoValue');
+
+            humiditySlider.addEventListener('input', function() {
+                humidityValue.textContent = this.value + '%';
+                updateSliderBackground(this);
+            });
+
+            quebradoSlider.addEventListener('input', function() {
+                quebradoValue.textContent = this.value + '%';
+                updateSliderBackground(this);
+            });
+
+            // Inicializar backgrounds
+            updateSliderBackground(humiditySlider);
+            updateSliderBackground(quebradoSlider);
+        }
+
+        // Función para actualizar el background del slider
+        function updateSliderBackground(slider) {
+            const value = (slider.value - slider.min) / (slider.max - slider.min) * 100;
+            slider.style.background = `linear-gradient(to right, var(--primary-color) 0%, var(--primary-color) ${value}%, var(--light-gray) ${value}%, var(--light-gray) 100%)`;
+        }
+
+        // Función para generar análisis
+        function generateAnalysis() {
+            const riceType = document.getElementById('riceType').value;
+            const quantity = document.getElementById('quantity').value;
+            const humidity = document.getElementById('humiditySlider').value;
+            const quebrado = document.getElementById('quebradoSlider').value;
+
+            // Validaciones
+            if (!riceType) {
+                showNotification('Por favor selecciona el tipo de arroz', 'warning');
+                return;
+            }
+
+            if (!quantity || quantity <= 0) {
+                showNotification('Por favor ingresa una cantidad válida', 'warning');
+                return;
+            }
+
+            // Guardar datos
+            analysisData = {
+                type: riceType,
+                quantity: quantity,
+                humidity: humidity,
+                quebrado: quebrado,
+                timestamp: new Date().toISOString(),
+                code: Math.floor(Math.random() * 900000) + 100000
+            };
+
+            // Mostrar loading y luego resultados
+            showNotification('Generando análisis...', 'info');
+            
+            setTimeout(() => {
+                showQRSection();
+                setTimeout(() => {
+                    showReportSection();
+                }, 2000);
+            }, 1500);
+        }
+
+        // Función para mostrar sección QR
+        function showQRSection() {
+            document.getElementById('qrSection').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('qrSection').classList.add('show');
+            }, 100);
+            
+            showNotification('QR generado exitosamente', 'success');
+        }
+
+        // Función para mostrar sección de reporte
+        function showReportSection() {
+            // Actualizar datos del reporte
+            document.getElementById('reportType').textContent = analysisData.type.charAt(0).toUpperCase() + analysisData.type.slice(1);
+            document.getElementById('reportQuebrado').textContent = analysisData.quebrado + '%';
+            document.getElementById('reportHumedad').textContent = analysisData.humidity + '%';
+            document.getElementById('userCode').textContent = analysisData.code;
+
+            document.getElementById('reportSection').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('reportSection').classList.add('show');
+            }, 100);
+            
+            showNotification('Informe de análisis generado', 'success');
+        }
+
+        // Función para finalizar análisis
+        function finishAnalysis() {
+            document.getElementById('successModal').classList.add('show');
+        }
+
+        // Función para cerrar modal de éxito
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+            resetForm();
+        }
+
+        // Función para resetear formulario
+        function resetForm() {
+            document.getElementById('riceType').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('humiditySlider').value = 67;
+            document.getElementById('quebradoSlider').value = 32;
+            document.getElementById('humidityValue').textContent = '67%';
+            document.getElementById('quebradoValue').textContent = '32%';
+            
+            document.getElementById('qrSection').style.display = 'none';
+            document.getElementById('qrSection').classList.remove('show');
+            document.getElementById('reportSection').style.display = 'none';
+            document.getElementById('reportSection').classList.remove('show');
+            
+            updateSliders();
+            showNotification('Formulario reiniciado', 'info');
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            updateSliders();
+            
+            // Animar elementos
+            const elements = document.querySelectorAll('.header, .welcome-section, .instructions-section, .action-buttons, .form-section');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+                element.classList.add('fade-in');
+            });
+        });
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

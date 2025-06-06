@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caseta - Molino</title>
+    <link rel="stylesheet" href="styles-caseta.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="caseta-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a la Caseta</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Instructions Section -->
+            <div class="instructions-section">
+                <div class="instruction-card">
+                    <p class="instruction-text">
+                        Elige correctamente la caseta en la que te encuentras y escanea el QR.
+                        Los datos de tu ARROZ se subirán automáticamente
+                    </p>
+                    <p class="reminder-text">
+                        Recuerda que después de subir tus datos, serás visible para todos los molinos
+                    </p>
+                </div>
+            </div>
+
+            <!-- Caseta Selection -->
+            <div class="caseta-selection">
+                <div class="caseta-grid" id="casetaGrid">
+                    <!-- Las casetas se generarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Selected Caseta Details -->
+            <div class="caseta-details" id="casetaDetails" style="display: none;">
+                <div class="details-card">
+                    <div class="caseta-header">
+                        <h2 class="caseta-title" id="selectedCasetaTitle">CASETA001</h2>
+                    </div>
+                    <div class="caseta-icon">
+                        <div class="building-icon">🏢</div>
+                    </div>
+                    <div class="caseta-info">
+                        <p class="address-line" id="casetaAddress">Calle: Calle 123 Distrito: Guadalupe</p>
+                        <p class="location-line" id="casetaLocation">Provincia: Pacasmayo Departamento: La Libertad</p>
+                    </div>
+                    <p class="scan-instruction">Escanea aquí código para escanear tu código</p>
+                </div>
+            </div>
+
+            <!-- Scan Button -->
+            <div class="scan-section" id="scanSection" style="display: none;">
+                <button class="scan-btn" onclick="startScanning()">
+                    <span class="scan-icon">📱</span>
+                    <span class="scan-text">ESCANEAR</span>
+                    <span class="scan-subtitle">Escanea el código QR para ver tu información</span>
+                </button>
+            </div>
+
+            <!-- Analysis Results -->
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <span class="results-icon">🔬</span>
+                        <h3 class="results-title">Resultado de Análisis</h3>
+                    </div>
+                    <p class="results-subtitle">En este apartado podrás ver los resultados del análisis de tu arroz</p>
+                    
+                    <div class="analysis-data">
+                        <div class="rice-type">
+                            <span class="type-label">Tipo de Arroz</span>
+                            <span class="type-value" id="riceType">Extra</span>
+                        </div>
+                        
+                        <div class="analysis-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Humedad</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" id="humidityBar" style="width: 98%"></div>
+                                </div>
+                                <span class="metric-value" id="humidityValue">98%</span>
+                            </div>
+                            
+                            <div class="metric-item">
+                                <span class="metric-label">Quebrado</span>
+                                <div class="metric-bar">
+                                    <div class="metric-fill" id="quebradoBar" style="width: 95%"></div>
+                                </div>
+                                <span class="metric-value" id="quebradoValue">95%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Action Button -->
+            <div class="bottom-action" id="bottomAction" style="display: none;">
+                <button class="upload-data-btn" onclick="saveResults()">
+                    <span class="upload-icon">⚙️</span>
+                    <span class="upload-text">Subir Datos</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content loading">
+            <div class="spinner"></div>
+            <h3>Escaneando...</h3>
+            <p>Por favor espera mientras procesamos tu código QR</p>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <div class="success-icon">✅</div>
+            <h3>¡Datos Subidos Exitosamente!</h3>
+            <p>Tu información de arroz ha sido registrada correctamente</p>
+            <button class="modal-btn primary" onclick="closeSuccessModal()">Continuar</button>
+        </div>
+    </div>
+
+    <script>
+        // Datos de las casetas
+        const casetasData = [
+            {
+                id: 'CASETA001',
+                name: 'CASETA 001',
+                address: 'Calle: Calle 123 Distrito: Guadalupe',
+                location: 'Provincia: Pacasmayo Departamento: La Libertad',
+                available: true
+            },
+            {
+                id: 'CASETA002',
+                name: 'CASETA 002',
+                address: 'Calle: Av. Principal 456 Distrito: Trujillo',
+                location: 'Provincia: Trujillo Departamento: La Libertad',
+                available: true
+            },
+            {
+                id: 'CASETA003',
+                name: 'CASETA 003',
+                address: 'Calle: Jr. Comercio 789 Distrito: Chiclayo',
+                location: 'Provincia: Chiclayo Departamento: Lambayeque',
+                available: false
+            },
+            {
+                id: 'CASETA004',
+                name: 'CASETA 004',
+                address: 'Calle: Av. Industrial 321 Distrito: Piura',
+                location: 'Provincia: Piura Departamento: Piura',
+                available: true
+            }
+        ];
+
+        let selectedCaseta = null;
+
+        // Función para actualizar la fecha
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        // Función para crear botones de caseta
+        function createCasetaButton(caseta) {
+            return `
+                <button class="caseta-btn ${!caseta.available ? 'disabled' : ''}" 
+                        onclick="selectCaseta('${caseta.id}')" 
+                        ${!caseta.available ? 'disabled' : ''}>
+                    <span class="caseta-icon">🏢</span>
+                    <span class="caseta-name">${caseta.name}</span>
+                    ${!caseta.available ? '<span class="unavailable-badge">No disponible</span>' : ''}
+                </button>
+            `;
+        }
+
+        // Función para renderizar las casetas
+        function renderCasetas() {
+            const grid = document.getElementById('casetaGrid');
+            grid.innerHTML = casetasData.map(caseta => createCasetaButton(caseta)).join('');
+        }
+
+        // Función para seleccionar una caseta
+        function selectCaseta(casetaId) {
+            selectedCaseta = casetasData.find(c => c.id === casetaId);
+            
+            if (selectedCaseta) {
+                // Actualizar detalles de la caseta
+                document.getElementById('selectedCasetaTitle').textContent = selectedCaseta.id;
+                document.getElementById('casetaAddress').textContent = selectedCaseta.address;
+                document.getElementById('casetaLocation').textContent = selectedCaseta.location;
+                
+                // Mostrar detalles y botón de escaneo
+                document.getElementById('casetaDetails').style.display = 'block';
+                document.getElementById('scanSection').style.display = 'block';
+                
+                // Animar la aparición
+                setTimeout(() => {
+                    document.getElementById('casetaDetails').classList.add('show');
+                    document.getElementById('scanSection').classList.add('show');
+                }, 100);
+                
+                // Marcar caseta como seleccionada
+                document.querySelectorAll('.caseta-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                event.target.closest('.caseta-btn').classList.add('selected');
+                
+                showNotification(`Caseta ${selectedCaseta.name} seleccionada`, 'success');
+            }
+        }
+
+        // Función para iniciar el escaneo
+        function startScanning() {
+            if (!selectedCaseta) {
+                showNotification('Por favor selecciona una caseta primero', 'warning');
+                return;
+            }
+            
+            // Mostrar modal de carga
+            document.getElementById('loadingModal').classList.add('show');
+            
+            // Simular proceso de escaneo
+            setTimeout(() => {
+                document.getElementById('loadingModal').classList.remove('show');
+                showResults();
+            }, 3000);
+        }
+
+        // Función para mostrar resultados
+        function showResults() {
+            // Generar datos aleatorios para la demostración
+            const humidity = Math.floor(Math.random() * 20) + 80; // 80-100%
+            const quebrado = Math.floor(Math.random() * 15) + 85; // 85-100%
+            
+            document.getElementById('humidityValue').textContent = humidity + '%';
+            document.getElementById('humidityBar').style.width = humidity + '%';
+            document.getElementById('quebradoValue').textContent = quebrado + '%';
+            document.getElementById('quebradoBar').style.width = quebrado + '%';
+            
+            // Mostrar sección de resultados y botón inferior
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('bottomAction').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('resultsSection').classList.add('show');
+                document.getElementById('bottomAction').classList.add('show');
+            }, 100);
+            
+            showNotification('Análisis completado exitosamente', 'success');
+        }
+
+        // Función para guardar resultados
+        function saveResults() {
+            document.getElementById('successModal').classList.add('show');
+        }
+
+        // Función para cerrar modal de éxito
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove('show');
+            resetScan();
+        }
+
+        // Función para resetear el escaneo
+        function resetScan() {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.getElementById('resultsSection').classList.remove('show');
+            document.getElementById('bottomAction').style.display = 'none';
+            document.getElementById('bottomAction').classList.remove('show');
+            showNotification('Listo para nuevo escaneo', 'info');
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            renderCasetas();
+            
+            // Animar elementos
+            const elements = document.querySelectorAll('.header, .welcome-section, .instructions-section, .caseta-selection');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+                element.classList.add('fade-in');
+            });
+        });
+
+        // Cerrar modales al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

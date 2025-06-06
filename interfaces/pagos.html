@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Pagos</title>
+    <link rel="stylesheet" href="styles-pagos.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Header -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a pagos</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn active" id="estadoPedido">
+                    <span class="btn-icon">📋</span>
+                    Estado de Pedido
+                </button>
+                <button class="nav-btn" id="detalle">
+                    <span class="btn-icon">📊</span>
+                    Detalle
+                </button>
+            </div>
+
+            <!-- Estado de tu venta -->
+            <section class="status-section">
+                <h2 class="section-title">Estado de tu venta</h2>
+                <div class="progress-container">
+                    <div class="progress-step completed">
+                        <div class="step-icon">
+                            <span>🚛</span>
+                        </div>
+                        <p class="step-label">Cargando en caseta</p>
+                    </div>
+                    <div class="progress-line completed"></div>
+                    <div class="progress-step active">
+                        <div class="step-icon">
+                            <span>🏭</span>
+                        </div>
+                        <p class="step-label">Trasladando a molino</p>
+                    </div>
+                    <div class="progress-line"></div>
+                    <div class="progress-step">
+                        <div class="step-icon">
+                            <span>💰</span>
+                        </div>
+                        <p class="step-label">Esperando el pago</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detalle de tu ventas -->
+            <section class="details-section">
+                <h2 class="section-title">Detalle de tu ventas</h2>
+                
+                <div class="payment-details">
+                    <h3 class="payment-title">Pago total</h3>
+                    
+                    <div class="details-table">
+                        <div class="detail-row">
+                            <span class="detail-label">Pago por saco de arroz</span>
+                            <span class="detail-value">S/. 85.75</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Cantidad vendida</span>
+                            <span class="detail-value">48,000 kg</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Margen</span>
+                            <span class="detail-value">600 sacos + 50kg</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Ganancia</span>
+                            <span class="detail-value">S/.51,450 soles</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Bono por transacción</span>
+                            <span class="detail-value">S/.300 soles</span>
+                        </div>
+                        <div class="detail-row total-row">
+                            <span class="detail-label total-label">Ganancia Total</span>
+                            <span class="detail-value total-value">S/.51,750 soles</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const dateElement = document.getElementById('currentDate');
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const detailRows = document.querySelectorAll('.detail-row');
+
+            // Configurar fecha actual
+            function updateDate() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                const formattedDate = now.toLocaleDateString('es-ES', options);
+                dateElement.textContent = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+            }
+
+            // Navegación entre botones
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remover clase active de todos los botones
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Agregar clase active al botón clickeado
+                    this.classList.add('active');
+                    
+                    // Animación de click
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+
+                    // Simular cambio de contenido
+                    if (this.id === 'detalle') {
+                        showDetailView();
+                    } else {
+                        showStatusView();
+                    }
+                });
+            });
+
+            // Mostrar vista de detalle
+            function showDetailView() {
+                const detailsSection = document.querySelector('.details-section');
+                detailsSection.style.opacity = '0';
+                setTimeout(() => {
+                    detailsSection.style.opacity = '1';
+                    detailsSection.style.transform = 'translateY(0)';
+                }, 200);
+            }
+
+            // Mostrar vista de estado
+            function showStatusView() {
+                const statusSection = document.querySelector('.status-section');
+                statusSection.style.opacity = '0';
+                setTimeout(() => {
+                    statusSection.style.opacity = '1';
+                    statusSection.style.transform = 'translateY(0)';
+                }, 200);
+            }
+
+            // Animación de progreso
+            function animateProgress() {
+                progressSteps.forEach((step, index) => {
+                    setTimeout(() => {
+                        step.style.opacity = '0';
+                        step.style.transform = 'translateY(20px)';
+                        
+                        setTimeout(() => {
+                            step.style.opacity = '1';
+                            step.style.transform = 'translateY(0)';
+                        }, 100);
+                    }, index * 200);
+                });
+            }
+
+            // Animación de detalles
+            function animateDetails() {
+                detailRows.forEach((row, index) => {
+                    setTimeout(() => {
+                        row.style.opacity = '0';
+                        row.style.transform = 'translateX(-20px)';
+                        
+                        setTimeout(() => {
+                            row.style.opacity = '1';
+                            row.style.transform = 'translateX(0)';
+                        }, 100);
+                    }, index * 100);
+                });
+            }
+
+            // Efecto hover en filas de detalles
+            detailRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(5px)';
+                    this.style.backgroundColor = 'rgba(57, 153, 81, 0.05)';
+                });
+
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                    this.style.backgroundColor = '';
+                });
+            });
+
+            // Simulación de actualización de progreso
+            function simulateProgress() {
+                const steps = document.querySelectorAll('.progress-step');
+                const lines = document.querySelectorAll('.progress-line');
+                
+                setTimeout(() => {
+                    // Completar segundo paso
+                    steps[1].classList.remove('active');
+                    steps[1].classList.add('completed');
+                    lines[1].classList.add('completed');
+                    
+                    // Activar tercer paso
+                    steps[2].classList.add('active');
+                    
+                    // Mostrar notificación
+                    showNotification('¡Arroz trasladado al molino exitosamente!', 'success');
+                }, 5000);
+            }
+
+            // Función para mostrar notificaciones
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem;">${type === 'success' ? '✓' : 'ℹ'}</span>
+                        <span>${message}</span>
+                    </div>
+                `;
+                
+                const bgColor = type === 'success' ? '#399951' : '#89959F';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${bgColor};
+                    color: white;
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                    z-index: 1000;
+                    font-family: 'Onest', sans-serif;
+                    font-weight: 500;
+                    transform: translateX(100%);
+                    transition: transform 0.5s ease-out;
+                `;
+
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 10);
+
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 500);
+                }, 4000);
+            }
+
+            // Inicializar
+            updateDate();
+            animateProgress();
+            animateDetails();
+            simulateProgress();
+
+            // Actualizar fecha cada minuto
+            setInterval(updateDate, 60000);
+
+            // Efecto de pulso en ganancia total
+            const totalValue = document.querySelector('.total-value');
+            setInterval(() => {
+                totalValue.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    totalValue.style.transform = 'scale(1)';
+                }, 200);
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
