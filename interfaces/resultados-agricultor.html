@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRice - Resultados Agricultor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-resultados-agricultor.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="results-container" id="resultsContainer">
+            <!-- Header Section -->
+            <div class="header" id="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a sus resultados</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Cards -->
+            <div class="metrics-section" id="metricsSection">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3 class="metric-title">Ventas Totales</h3>
+                    </div>
+                    <div class="metric-value">S/24,850</div>
+                    <div class="metric-change positive">
+                        <span class="change-icon">↗</span>
+                        <span class="change-text">+12% vs mes anterior</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3 class="metric-title">Cantidad Total</h3>
+                    </div>
+                    <div class="metric-value">1,450 kg</div>
+                    <div class="metric-change positive">
+                        <span class="change-icon">↗</span>
+                        <span class="change-text">+8% vs mes anterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Income Chart -->
+            <div class="chart-section" id="chartSection1">
+                <div class="chart-header">
+                    <h3 class="chart-title">Ingresos Mensuales</h3>
+                    <div class="chart-filter">
+                        <select id="yearFilter" onchange="updateChart()">
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Quantity Sold Chart -->
+            <div class="chart-section" id="chartSection2">
+                <div class="chart-header">
+                    <h3 class="chart-title">Cantidad Vendida (kg)</h3>
+                    <div class="chart-filter">
+                        <select id="periodFilter" onchange="updateLineChart()">
+                            <option value="6">Últimos 6 meses</option>
+                            <option value="12">Últimos 12 meses</option>
+                            <option value="24">Últimos 2 años</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="quantityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="summary-stats" id="summaryStats">
+                <div class="stat-item">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Molinos Activos</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">🌾</div>
+                    <div class="stat-info">
+                        <div class="stat-value">S/18.5</div>
+                        <div class="stat-label">Precio Promedio/kg</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <div class="stat-value">362 kg</div>
+                        <div class="stat-label">Promedio Mensual</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Cargando resultados...</p>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        let monthlyChart, quantityChart;
+
+        // Datos mejorados para los gráficos
+        const monthlyData = {
+            2023: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                income: [1200, 1800, 1500, 2200, 1900, 2400, 2100, 2800, 2300, 2600, 2200, 2450],
+                costs: [800, 1200, 1000, 1400, 1200, 1500, 1300, 1700, 1400, 1600, 1300, 1500],
+                profit: [400, 600, 500, 800, 700, 900, 800, 1100, 900, 1000, 900, 950]
+            },
+            2022: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                income: [1000, 1400, 1200, 1800, 1600, 2000, 1800, 2200, 1900, 2100, 1800, 2000],
+                costs: [700, 1000, 850, 1200, 1100, 1300, 1200, 1400, 1300, 1400, 1200, 1300],
+                profit: [300, 400, 350, 600, 500, 700, 600, 800, 600, 700, 600, 700]
+            },
+            2021: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                income: [900, 1200, 1100, 1500, 1400, 1700, 1600, 1900, 1700, 1800, 1600, 1750],
+                costs: [650, 900, 800, 1100, 1000, 1200, 1150, 1300, 1200, 1250, 1100, 1200],
+                profit: [250, 300, 300, 400, 400, 500, 450, 600, 500, 550, 500, 550]
+            }
+        };
+
+        const quantityData = {
+            6: {
+                labels: ['Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                quantity: [280, 320, 290, 380, 340, 450],
+                quality: [85, 88, 82, 92, 87, 94],
+                price: [17.5, 18.2, 17.8, 19.1, 18.5, 19.5]
+            },
+            12: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                quantity: [220, 280, 320, 290, 380, 340, 450, 420, 380, 410, 390, 450],
+                quality: [78, 82, 85, 80, 88, 83, 92, 89, 85, 90, 87, 94],
+                price: [16.5, 17.0, 17.8, 17.2, 18.5, 18.0, 19.1, 18.8, 18.2, 19.0, 18.5, 19.5]
+            },
+            24: {
+                labels: ['Q1 2022', 'Q2 2022', 'Q3 2022', 'Q4 2022', 'Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023'],
+                quantity: [240, 310, 350, 380, 290, 390, 420, 450],
+                quality: [75, 80, 83, 85, 82, 87, 89, 92],
+                price: [15.5, 16.8, 17.5, 18.0, 17.2, 18.5, 18.8, 19.2]
+            }
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            showLoading();
+            updateDate();
+            
+            setTimeout(() => {
+                hideLoading();
+                showAllSections();
+                initializeCharts();
+                showNotification('Datos actualizados correctamente', 'success');
+            }, 1000);
+        });
+
+        // Mostrar todas las secciones (corregido)
+        function showAllSections() {
+            // Mostrar contenedor principal
+            document.getElementById('resultsContainer').classList.add('fade-in');
+            
+            // Mostrar header
+            document.getElementById('header').classList.add('slide-down');
+            
+            // Mostrar sección de métricas
+            document.getElementById('metricsSection').classList.add('slide-up');
+            
+            // Mostrar tarjetas métricas
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('slide-in');
+                }, 200 + (index * 100));
+            });
+            
+            // Mostrar secciones de gráficos
+            document.getElementById('chartSection1').classList.add('slide-up');
+            document.getElementById('chartSection2').classList.add('slide-up');
+            
+            // Mostrar sección de estadísticas de resumen
+            document.getElementById('summaryStats').classList.add('slide-up');
+            
+            // Mostrar elementos de estadísticas
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('slide-in');
+                }, 400 + (index * 100));
+            });
+        }
+
+        function initializeCharts() {
+            createMonthlyChart();
+            createQuantityChart();
+        }
+
+        function createMonthlyChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const year = document.getElementById('yearFilter').value;
+            const data = monthlyData[year];
+            
+            if (monthlyChart) {
+                monthlyChart.destroy();
+            }
+
+            monthlyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Ingresos (S/)',
+                            data: data.income,
+                            backgroundColor: '#399951',
+                            borderColor: '#399951',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        },
+                        {
+                            label: 'Costos (S/)',
+                            data: data.costs,
+                            backgroundColor: '#dc3545',
+                            borderColor: '#dc3545',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        },
+                        {
+                            label: 'Ganancia (S/)',
+                            data: data.profit,
+                            backgroundColor: '#17a2b8',
+                            borderColor: '#17a2b8',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            borderSkipped: false,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    family: 'Onest',
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#399951',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            titleFont: {
+                                family: 'Onest',
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                family: 'Onest',
+                                size: 12
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': S/' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Meses',
+                                font: {
+                                    family: 'Onest',
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                color: '#1e2023'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Onest',
+                                    size: 11
+                                },
+                                color: '#89959f'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Monto (S/)',
+                                font: {
+                                    family: 'Onest',
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                color: '#399951'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Onest',
+                                    size: 11
+                                },
+                                color: '#89959f',
+                                callback: function(value) {
+                                    return 'S/' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function createQuantityChart() {
+            const ctx = document.getElementById('quantityChart').getContext('2d');
+            const period = document.getElementById('periodFilter').value;
+            const data = quantityData[period];
+            
+            if (quantityChart) {
+                quantityChart.destroy();
+            }
+
+            quantityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Cantidad (kg)',
+                            data: data.quantity,
+                            borderColor: '#399951',
+                            backgroundColor: 'rgba(57, 153, 81, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#399951',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Calidad (%)',
+                            data: data.quality,
+                            borderColor: '#17a2b8',
+                            backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                            borderWidth: 3,
+                            fill: false,
+                            tension: 0.4,
+                            pointBackgroundColor: '#17a2b8',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Precio (S/)',
+                            data: data.price,
+                            type: 'bar',
+                            backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                            borderColor: '#ffc107',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            yAxisID: 'y2'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    family: 'Onest',
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#ffffff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#399951',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            titleFont: {
+                                family: 'Onest',
+                                size: 14,
+                                weight: '600'
+                            },
+                            bodyFont: {
+                                family: 'Onest',
+                                size: 12
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label + ': ';
+                                    if (context.dataset.label === 'Cantidad (kg)') {
+                                        label += context.parsed.y + ' kg';
+                                    } else if (context.dataset.label === 'Calidad (%)') {
+                                        label += context.parsed.y + '%';
+                                    } else if (context.dataset.label === 'Precio (S/)') {
+                                        label += 'S/' + context.parsed.y;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Período',
+                                font: {
+                                    family: 'Onest',
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                color: '#1e2023'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Onest',
+                                    size: 11
+                                },
+                                color: '#89959f'
+                            }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: 'Cantidad (kg)',
+                                font: {
+                                    family: 'Onest',
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                color: '#399951'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Onest',
+                                    size: 11
+                                },
+                                color: '#89959f'
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Calidad (%)',
+                                font: {
+                                    family: 'Onest',
+                                    size: 14,
+                                    weight: '600'
+                                },
+                                color: '#17a2b8'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Onest',
+                                    size: 11
+                                },
+                                color: '#89959f'
+                            }
+                        },
+                        y2: {
+                            type: 'linear',
+                            display: false,
+                            position: 'right',
+                            max: 25,
+                            grid: {
+                                drawOnChartArea: false,
+                            }
+                        }
+                    },
+                    elements: {
+                        point: {
+                            hoverBackgroundColor: '#ffffff'
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        function updateChart() {
+            showNotification('Actualizando gráfico de ingresos...', 'info');
+            setTimeout(() => {
+                createMonthlyChart();
+            }, 500);
+        }
+
+        function updateLineChart() {
+            showNotification('Actualizando gráfico de cantidad...', 'info');
+            setTimeout(() => {
+                createQuantityChart();
+            }, 500);
+        }
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+
+        function editProfile() {
+            showNotification('Función de editar perfil próximamente', 'info');
+            toggleProfileMenu();
+        }
+
+        function viewSettings() {
+            showNotification('Función de configuración próximamente', 'info');
+            toggleProfileMenu();
+        }
+
+        function logout() {
+            showNotification('Cerrando sesión...', 'info');
+            toggleProfileMenu();
+            setTimeout(() => {
+                window.location.href = 'bienvenida.html';
+            }, 1500);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long'
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            const capitalizedDate = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+            document.getElementById('currentDate').textContent = capitalizedDate;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileSection = document.querySelector('.profile-section');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            if (!profileSection.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (monthlyChart) monthlyChart.resize();
+            if (quantityChart) quantityChart.resize();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.results-container').classList.add('fade-in');
+            document.querySelector('.header').classList.add('slide-down');
+        });
+    </script>
+</body>
+</html>

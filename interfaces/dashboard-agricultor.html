@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Molinos - Molino</title>
+    <link rel="stylesheet" href="styles-dashboard-agricultor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="marketplace-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Mauricio Buenos Días</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">🏭</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mills Avatars Section -->
+            <div class="mills-avatars">
+                <div class="avatar-scroll" id="millsAvatars">
+                    <!-- Los avatares se generarán dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Buscar molinos ..." class="search-input" id="searchInput">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="navigateTo('reporte-agricultor.html')">
+                    <span class="btn-icons">📋</span>
+                    <span class="btn-texts">Reporte</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('resultados-agricultor.html')">
+                    <span class="btn-icons">📈</span>
+                    <span class="btn-texts">Resultados</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('pagos-agricultor.html')">
+                    <span class="btn-icons">💳</span>
+                    <span class="btn-texts">Pagos</span>
+                </button>
+            </div>
+
+            <!-- Mills Cards Section -->
+            <div class="mills-section" id="millsContainer">
+                <!-- Las tarjetas se generarán dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para acciones -->
+    <div id="actionModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar acción</h3>
+            <p id="modalMessage">¿Estás seguro de realizar esta acción?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn confirm" onclick="confirmAction()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de los molinos
+        const millsData = [
+            {
+                id: 1,
+                name: "El Sol Dorado",
+                location: "Calle 01 and 123 | Lambayeque | Trujillo | Trujillo | La Libertad",
+                rating: 5,
+                maxRating: 87.98,
+                riceType: "Extra",
+                humidity: 65,
+                quebrado: 20,
+                currentStock: 2700,
+                totalStock: 3000,
+                percentage: 90,
+                avatar: "🌾"
+            },
+            {
+                id: 2,
+                name: "La Luna Llena",
+                location: "Calle 01 and 123 | Lambayeque | Trujillo | Trujillo | La Libertad",
+                rating: 3,
+                maxRating: 87.98,
+                riceType: "Extra",
+                humidity: 65,
+                quebrado: 20,
+                currentStock: 150,
+                totalStock: 1500,
+                percentage: 10,
+                avatar: "🏭"
+            },
+            {
+                id: 3,
+                name: "Medio Menguante",
+                location: "Calle 01 and 123 | Lambayeque | Trujillo | Trujillo | La Libertad",
+                rating: 4,
+                maxRating: 95.99,
+                riceType: "Extra",
+                humidity: 65,
+                quebrado: 20,
+                currentStock: 1500,
+                totalStock: 3000,
+                percentage: 50,
+                avatar: "⚙️"
+            }
+        ];
+
+        // Datos de avatares adicionales
+        const avatarsData = [
+            { id: 1, icon: "🌾", name: "Molino 1" },
+            { id: 2, icon: "🏭", name: "Molino 2" },
+            { id: 3, icon: "🌉", name: "Molino 3" },
+            { id: 4, icon: "🌊", name: "Molino 4" },
+            { id: 5, icon: "🏠", name: "Molino 5" },
+            { id: 6, icon: "🌍", name: "Molino 6" }
+        ];
+
+        let currentAction = null;
+        let currentMillId = null;
+
+        // Función para actualizar la fecha
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        // Función para crear avatares de molinos
+        function createMillAvatar(avatar) {
+            return `
+                <div class="mill-avatar" onclick="selectMill(${avatar.id})">
+                    <div class="avatar-circle">
+                        <span class="avatar-emoji">${avatar.icon}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para renderizar avatares
+        function renderAvatars() {
+            const container = document.getElementById('millsAvatars');
+            container.innerHTML = avatarsData.map(avatar => createMillAvatar(avatar)).join('');
+        }
+
+        // Función para crear tarjeta de molino
+        function createMillCard(mill) {
+    return `
+        <div class="mill-card" data-id="${mill.id}" style="--percentage: ${mill.percentage}%;">
+            <div class="card-content">
+                <div class="card-header">
+                    <div class="mill-info">
+                        <h3 class="mill-name">Molino, ${mill.name}</h3>
+                        <p class="mill-location">${mill.location}</p>
+                    </div>
+                    <div class="rating-section">
+                        <span class="rating-stars">${'⭐'.repeat(mill.rating)}</span>
+                        <span class="rating-value">${mill.maxRating}</span>
+                    </div>
+                </div>
+                
+                <div class="rice-section">
+                    <div class="rice-header">
+                        <span class="rice-label">Arroz, Tipo ${mill.riceType}</span>
+                        <span class="rice-icon">🌾</span>
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Humedad</span>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: ${mill.humidity}%"></div>
+                            </div>
+                            <span class="metric-value">${mill.humidity}%</span>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <span class="metric-label">Quebrado</span>
+                            <div class="metric-bar">
+                                <div class="metric-fill" style="width: ${mill.quebrado}%"></div>
+                            </div>
+                            <span class="metric-value">${mill.quebrado}%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <button class="action-card-btn sell" onclick="handleAction('sell', ${mill.id})">
+                            <span class="btn-icon">💰</span>
+                            Vender
+                        </button>
+                        <button class="action-card-btn favorite" onclick="handleAction('favorite', ${mill.id})">
+                            <span class="btn-icon">⭐</span>
+                            Agregar Favorito
+                        </button>
+                    </div>
+                    
+                    <div class="stock-info">
+                        <span class="stock-text">${mill.currentStock} sacos de ${mill.totalStock}</span>
+                        <div class="stock-percentage">
+                            <span class="percentage-value">${mill.percentage}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+        // Función para renderizar tarjetas de molinos
+        function renderMills(data = millsData) {
+            const container = document.getElementById('millsContainer');
+            container.innerHTML = data.map(mill => createMillCard(mill)).join('');
+            
+            // Animar las tarjetas
+            const cards = container.querySelectorAll('.mill-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        }
+
+        // Función para manejar acciones
+        function handleAction(action, millId) {
+            currentAction = action;
+            currentMillId = millId;
+            
+            const mill = millsData.find(m => m.id === millId);
+            const modal = document.getElementById('actionModal');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            
+            switch(action) {
+                case 'sell':
+                    title.textContent = 'Vender Arroz';
+                    message.textContent = `¿Confirmas la venta a ${mill.name}?`;
+                    break;
+                case 'favorite':
+                    title.textContent = 'Agregar a Favoritos';
+                    message.textContent = `¿Quieres agregar ${mill.name} a tus favoritos?`;
+                    break;
+            }
+            
+            modal.classList.add('show');
+        }
+
+        // Función para confirmar acción
+        function confirmAction() {
+            const mill = millsData.find(m => m.id === currentMillId);
+            
+            switch(currentAction) {
+                case 'sell':
+                    window.location.href = 'caseta.html';
+                    break;
+                case 'favorite':
+                    showNotification(`${mill.name} agregado a favoritos`, 'success');
+                    break;
+            }
+            
+            closeModal();
+        }
+
+        // Función para cerrar modal
+        function closeModal() {
+            document.getElementById('actionModal').classList.remove('show');
+        }
+
+        // Función para seleccionar molino desde avatar
+        function selectMill(avatarId) {
+            showNotification(`Molino ${avatarId} seleccionado`, 'info');
+        }
+
+        // Función para navegación
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Función de búsqueda
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredData = millsData.filter(mill => 
+                    mill.name.toLowerCase().includes(searchTerm) ||
+                    mill.location.toLowerCase().includes(searchTerm)
+                );
+                renderMills(filteredData);
+            });
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            renderAvatars();
+            renderMills();
+            setupSearch();
+            
+            // Animar elementos
+            const elements = document.querySelectorAll('.header, .welcome-section, .mills-avatars, .search-section, .action-buttons');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+                element.classList.add('fade-in');
+            });
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('actionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

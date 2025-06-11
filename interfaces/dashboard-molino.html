@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Molino</title>
+    <link rel="stylesheet" href="styles-dashboard-molino.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Buenos Días</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Buscar aquí..." class="search-input" id="searchInput">
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="navigateTo('crear-campana.html')">
+                    <span class="btn-icon">➕</span>
+                    <span class="btn-text">Crear campaña</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('reporte-molino.html')">
+                    <span class="btn-icon">📋</span>
+                    <span class="btn-text">Reporte</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('resultados-molino.html')">
+                    <span class="btn-icon">📈</span>
+                    <span class="btn-text">Resultados</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('analisis-datos.html')">
+                    <span class="btn-icon">🔬</span>
+                    <span class="btn-text">Analisis</span>
+                </button>
+                <button class="action-btn" onclick="navigateTo('pagos-molino.html')">
+                    <span class="btn-icon">💳</span>
+                    <span class="btn-text">Pagos</span>
+                </button>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <button class="filter-btn" onclick="toggleFilter()">
+                    <span class="filter-icon">🔽</span>
+                    <span class="filter-text">Filtrar por...</span>
+                </button>
+            </div>
+
+            <!-- Rice Cards Section -->
+            <div class="cards-section" id="cardsContainer">
+                <!-- Las tarjetas se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para confirmaciones -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar acción</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres realizar esta acción?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn confirm" onclick="confirmAction()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Datos de ejemplo para las tarjetas de arroz
+        const riceData = [
+            {
+                id: 1,
+                name: "Arroz, Tipo Extra",
+                price: 67.98,
+                rating: "⭐",
+                humidity: 96,
+                quebrado: 94,
+                currentStock: 2700,
+                totalStock: 3000,
+                percentage: 90
+            },
+            {
+                id: 2,
+                name: "Arroz, Tipo Añejo",
+                price: 50.50,
+                rating: "⭐",
+                humidity: 75,
+                quebrado: 85,
+                currentStock: 100,
+                totalStock: 1000,
+                percentage: 10
+            },
+            {
+                id: 3,
+                name: "Arroz, Tipo Superior",
+                price: 98.99,
+                rating: "⭐",
+                humidity: 92,
+                quebrado: 88,
+                currentStock: 1500,
+                totalStock: 3000,
+                percentage: 50
+            }
+        ];
+
+        let currentAction = null;
+        let currentCardId = null;
+
+        // Función para actualizar la fecha
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.getElementById('currentDate').textContent = dateString;
+        }
+
+        // Función para crear una tarjeta de arroz
+        function createRiceCard(rice) {
+            return `
+                <div class="rice-card" data-id="${rice.id}" style="--percentage: ${rice.percentage}%;">
+                    <div class="card-wrapper">
+                        <div class="card-header">
+                            <div class="rice-info">
+                                <h3 class="rice-title">${rice.name}</h3>
+                                <div class="rating">
+                                    <span class="star">${rice.rating}</span>
+                                </div>
+                            </div>
+                            <div class="price">
+                                <span class="currency">S/</span>
+                                <span class="amount">${rice.price}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-content">
+                            <div class="progress-bars">
+                                <div class="progress-item">
+                                    <span class="progress-label">Humedad</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${rice.humidity}%"></div>
+                                    </div>
+                                    <span class="progress-value">${rice.humidity}%</span>
+                                </div>
+                                <div class="progress-item">
+                                    <span class="progress-label">Quebrado</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${rice.quebrado}%"></div>
+                                    </div>
+                                    <span class="progress-value">${rice.quebrado}%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="card-actions">
+                                <button class="action-card-btn accept" onclick="handleCardAction('accept', ${rice.id})">
+                                    ✓ Aceptar
+                                </button>
+                                <button class="action-card-btn edit" onclick="handleCardAction('edit', ${rice.id})">
+                                    ✏️ Editar
+                                </button>
+                                <button class="action-card-btn delete" onclick="handleCardAction('delete', ${rice.id})">
+                                    🗑️ Eliminar
+                                </button>
+                            </div>
+                            
+                            <div class="stock-info">
+                                <span class="stock-text">${rice.currentStock} sacos de ${rice.totalStock}</span>
+                                <div class="stock-percentage">
+                                    <span class="percentage-value">${rice.percentage}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para renderizar todas las tarjetas
+        function renderCards(data = riceData) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = data.map(rice => createRiceCard(rice)).join('');
+            
+            // Animar las tarjetas
+            const cards = container.querySelectorAll('.rice-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('fade-in');
+            });
+        }
+
+        // Función para manejar acciones de las tarjetas
+        function handleCardAction(action, cardId) {
+            currentAction = action;
+            currentCardId = cardId;
+            
+            const rice = riceData.find(r => r.id === cardId);
+            const modal = document.getElementById('confirmModal');
+            const title = document.getElementById('modalTitle');
+            const message = document.getElementById('modalMessage');
+            
+            switch(action) {
+                case 'accept':
+                    title.textContent = 'Aceptar Arroz';
+                    message.textContent = `¿Confirmas la aceptación de ${rice.name}?`;
+                    break;
+                case 'edit':
+                    title.textContent = 'Editar Arroz';
+                    message.textContent = `¿Quieres editar la información de ${rice.name}?`;
+                    break;
+                case 'delete':
+                    title.textContent = 'Eliminar Arroz';
+                    message.textContent = `¿Estás seguro de eliminar ${rice.name}? Esta acción no se puede deshacer.`;
+                    break;
+            }
+            
+            modal.classList.add('show');
+        }
+
+        // Función para confirmar la acción
+        function confirmAction() {
+            const cardElement = document.querySelector(`[data-id="${currentCardId}"]`);
+            
+            switch(currentAction) {
+                case 'accept':
+                    cardElement.classList.add('accepted');
+                    showNotification('Arroz aceptado correctamente', 'success');
+                    break;
+                case 'edit':
+                    showNotification('Función de edición próximamente', 'info');
+                    break;
+                case 'delete':
+                    cardElement.style.animation = 'slideOut 0.5s ease-in-out forwards';
+                    setTimeout(() => {
+                        const index = riceData.findIndex(r => r.id === currentCardId);
+                        if (index > -1) {
+                            riceData.splice(index, 1);
+                            renderCards();
+                        }
+                    }, 500);
+                    showNotification('Arroz eliminado correctamente', 'success');
+                    break;
+            }
+            
+            closeModal();
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Función para navegación
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Función para mostrar "próximamente"
+        function showComingSoon() {
+            showNotification('Función próximamente disponible', 'info');
+        }
+
+        // Función para toggle del filtro
+        function toggleFilter() {
+            showNotification('Filtros próximamente disponibles', 'info');
+        }
+
+        // Función de búsqueda
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredData = riceData.filter(rice => 
+                    rice.name.toLowerCase().includes(searchTerm)
+                );
+                renderCards(filteredData);
+            });
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            renderCards();
+            setupSearch();
+            
+            // Animar elementos del header
+            const elements = document.querySelectorAll('.header, .search-section, .action-buttons, .filter-section');
+            elements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+                element.classList.add('fade-in');
+            });
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

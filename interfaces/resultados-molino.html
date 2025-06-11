@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRice - Resultados Molino</title>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-resultados-molino.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="resultados-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a sus resultados</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <div class="summary-header">
+                    <h2 class="section-title">Resumen de Compras</h2>
+                    <button class="filter-btn" onclick="toggleFilterModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22,3 2,3 10,12.46 10,19 14,21 14,12.46"></polygon>
+                        </svg>
+                        <span>Filtrar</span>
+                    </button>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon sacos-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="metric-title">Total Sacos</h3>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value">1,245</div>
+                            <div class="metric-change positive">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"></polyline>
+                                    <polyline points="17,6 23,6 23,12"></polyline>
+                                </svg>
+                                <span>16% vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon costo-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                                </svg>
+                            </div>
+                            <h3 class="metric-title">Costo Total</h3>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value">S/. 24,900</div>
+                            <div class="metric-change positive">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"></polyline>
+                                    <polyline points="17,6 23,6 23,12"></polyline>
+                                </svg>
+                                <span>8% vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon precio-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                                </svg>
+                            </div>
+                            <h3 class="metric-title">Precio Promedio</h3>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value">S/. 20.00</div>
+                            <div class="metric-change negative">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,18 13.5,8.5 8.5,13.5 1,6"></polyline>
+                                    <polyline points="17,18 23,18 23,12"></polyline>
+                                </svg>
+                                <span>3% vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-icon compras-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                                </svg>
+                            </div>
+                            <h3 class="metric-title">Compras</h3>
+                        </div>
+                        <div class="metric-content">
+                            <div class="metric-value">28</div>
+                            <div class="metric-change positive">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"></polyline>
+                                    <polyline points="17,6 23,6 23,12"></polyline>
+                                </svg>
+                                <span>8% vs mes anterior</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <!-- Tendencia de Compras -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Tendencia de Compras</h3>
+                        <div class="chart-controls">
+                            <select id="trendPeriod" onchange="updateTrendChart()">
+                                <option value="6m">Últimos 6 meses</option>
+                                <option value="3m">Últimos 3 meses</option>
+                                <option value="1m">Último mes</option>
+                                <option value="1y">Último año</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Distribución por Tipo -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Distribución por Tipo</h3>
+                        <div class="chart-controls">
+                            <button class="chart-btn" onclick="toggleChartType()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <rect x="7" y="7" width="3" height="10"></rect>
+                                    <rect x="14" y="7" width="3" height="10"></rect>
+                                </svg>
+                                <span id="chartTypeText">Ver Barras</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color integral"></div>
+                            <span class="legend-label">Arroz Integral (45%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color blanco"></div>
+                            <span class="legend-label">Arroz Blanco (30%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color parbolizado"></div>
+                            <span class="legend-label">Arroz Parbolizado (15%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color otros"></div>
+                            <span class="legend-label">Otros (10%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Stats -->
+            <div class="additional-stats">
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12,6 12,12 16,14"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">4.2 días</div>
+                        <div class="stat-label">Tiempo promedio<br>de procesamiento</div>
+                    </div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">94.5%</div>
+                        <div class="stat-label">Eficiencia<br>operativa</div>
+                    </div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Agricultores<br>activos</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Modal -->
+    <div id="filterModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Filtrar Resultados</h3>
+                <button class="close-btn" onclick="closeFilterModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-group">
+                    <label>Período de tiempo</label>
+                    <div class="date-range">
+                        <input type="date" id="startDate" placeholder="Fecha inicio">
+                        <input type="date" id="endDate" placeholder="Fecha fin">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Tipo de arroz</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="integral" checked>
+                            <span>Arroz Integral</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="blanco" checked>
+                            <span>Arroz Blanco</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="parbolizado" checked>
+                            <span>Arroz Parbolizado</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="otros" checked>
+                            <span>Otros</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Rango de precio</label>
+                    <div class="price-range">
+                        <input type="number" placeholder="Precio mínimo" min="0">
+                        <input type="number" placeholder="Precio máximo" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="clearFilters()">Limpiar</button>
+                <button class="modal-btn primary" onclick="applyFilters()">Aplicar Filtros</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Menu -->
+    <div id="profileMenu" class="profile-menu">
+        <div class="profile-menu-item" onclick="viewProfile()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Ver Perfil</span>
+        </div>
+        <div class="profile-menu-item" onclick="exportData()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7,10 12,15 17,10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>Exportar Datos</span>
+        </div>
+        <div class="profile-menu-item" onclick="viewSettings()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"></path>
+            </svg>
+            <span>Configuración</span>
+        </div>
+        <div class="profile-menu-item" onclick="logout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16,17 21,12 16,7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Cerrar Sesión</span>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        let trendChart, distributionChart;
+        let isDonutChart = true;
+
+        // Datos para los gráficos
+        const trendData = {
+            '6m': {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                data: [850, 920, 1100, 980, 1150, 1245]
+            },
+            '3m': {
+                labels: ['Abr', 'May', 'Jun'],
+                data: [980, 1150, 1245]
+            },
+            '1m': {
+                labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4'],
+                data: [280, 320, 315, 330]
+            },
+            '1y': {
+                labels: ['2023 Q1', '2023 Q2', '2023 Q3', '2023 Q4', '2024 Q1', '2024 Q2'],
+                data: [2400, 2800, 3200, 2900, 3400, 3600]
+            }
+        };
+
+        const distributionData = {
+            labels: ['Arroz Integral', 'Arroz Blanco', 'Arroz Parbolizado', 'Otros'],
+            data: [45, 30, 15, 10],
+            colors: ['#8b5a3c', '#e8e8e8', '#f4d03f', '#95a5a6']
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada
+            setTimeout(() => {
+                document.querySelector('.resultados-container').classList.add('fade-in');
+            }, 100);
+
+            // Animar elementos secuencialmente
+            setTimeout(() => {
+                document.querySelector('.header').classList.add('slide-down');
+            }, 300);
+            
+            setTimeout(() => {
+                document.querySelector('.summary-section').classList.add('slide-up');
+            }, 500);
+            
+            setTimeout(() => {
+                document.querySelector('.charts-section').classList.add('slide-up');
+            }, 700);
+
+            setTimeout(() => {
+                document.querySelector('.additional-stats').classList.add('slide-up');
+            }, 900);
+
+            // Animar métricas
+            setTimeout(() => {
+                document.querySelectorAll('.metric-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('slide-in');
+                    }, index * 150);
+                });
+            }, 800);
+
+            // Animar estadísticas adicionales
+            setTimeout(() => {
+                document.querySelectorAll('.stat-item').forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('slide-in');
+                    }, index * 200);
+                });
+            }, 1200);
+
+            // Inicializar gráficos
+            setTimeout(() => {
+                initCharts();
+            }, 1000);
+
+            // Actualizar fecha
+            updateCurrentDate();
+        });
+
+        // Inicializar gráficos
+        function initCharts() {
+            initTrendChart();
+            initDistributionChart();
+        }
+
+        // Gráfico de tendencias
+        function initTrendChart() {
+            const ctx = document.getElementById('trendChart').getContext('2d');
+            const currentData = trendData['6m'];
+            
+            trendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: currentData.labels,
+                    datasets: [{
+                        label: 'Sacos Comprados',
+                        data: currentData.data,
+                        borderColor: '#399951',
+                        backgroundColor: 'rgba(57, 153, 81, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#399951',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: '#89959F',
+                                font: {
+                                    family: 'Onest',
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                color: '#89959F',
+                                font: {
+                                    family: 'Onest',
+                                    size: 12
+                                },
+                                callback: function(value) {
+                                    return value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Gráfico de distribución
+        function initDistributionChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            distributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: distributionData.labels,
+                    datasets: [{
+                        data: distributionData.data,
+                        backgroundColor: distributionData.colors,
+                        borderWidth: 0,
+                        hoverBorderWidth: 3,
+                        hoverBorderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Actualizar gráfico de tendencias
+        function updateTrendChart() {
+            const period = document.getElementById('trendPeriod').value;
+            const newData = trendData[period];
+            
+            trendChart.data.labels = newData.labels;
+            trendChart.data.datasets[0].data = newData.data;
+            trendChart.update('active');
+            
+            showNotification(`Gráfico actualizado: ${period}`, 'info');
+        }
+
+        // Alternar tipo de gráfico de distribución
+        function toggleChartType() {
+            const newType = isDonutChart ? 'bar' : 'doughnut';
+            const button = document.getElementById('chartTypeText');
+            
+            distributionChart.destroy();
+            
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            if (newType === 'bar') {
+                distributionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: distributionData.labels,
+                        datasets: [{
+                            data: distributionData.data,
+                            backgroundColor: distributionData.colors,
+                            borderWidth: 0,
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: '#89959F',
+                                    font: {
+                                        family: 'Onest',
+                                        size: 11
+                                    }
+                                }
+                            },
+                            y: {
+                                display: true,
+                                beginAtZero: true,
+                                grid: {
+                                    display: true,
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#89959F',
+                                    font: {
+                                        family: 'Onest',
+                                        size: 12
+                                    },
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 800,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+                button.textContent = 'Ver Dona';
+            } else {
+                initDistributionChart();
+                button.textContent = 'Ver Barras';
+            }
+            
+            isDonutChart = !isDonutChart;
+        }
+
+        // Funciones de interacción
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+
+        function toggleFilterModal() {
+            document.getElementById('filterModal').classList.add('show');
+        }
+
+        function closeFilterModal() {
+            document.getElementById('filterModal').classList.remove('show');
+        }
+
+        function applyFilters() {
+            closeFilterModal();
+            showNotification('Filtros aplicados correctamente', 'success');
+            // Aquí iría la lógica de filtrado
+        }
+
+        function clearFilters() {
+            // Limpiar todos los filtros
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            document.querySelectorAll('input[type="date"], input[type="number"]').forEach(input => {
+                input.value = '';
+            });
+            showNotification('Filtros limpiados', 'info');
+        }
+
+        function viewProfile() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Abriendo perfil...', 'info');
+        }
+
+        function exportData() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Exportando datos...', 'info');
+            setTimeout(() => {
+                showNotification('Datos exportados correctamente', 'success');
+            }, 2000);
+        }
+
+        function viewSettings() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Abriendo configuración...', 'info');
+        }
+
+        function logout() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Cerrando sesión...', 'info');
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.querySelector('.date').textContent = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar menús al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const profileAvatar = document.querySelector('.profile-avatar');
+            
+            if (!profileAvatar.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('filterModal');
+            if (event.target === modal) {
+                closeFilterModal();
+            }
+        }
+
+        // Efectos de hover en métricas
+        document.querySelectorAll('.metric-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+
+        window.addEventListener('resize', function() {
+            if (trendChart) {
+                trendChart.resize();
+                trendChart.update('resize');
+            }
+            if (distributionChart) {
+                distributionChart.resize();
+                distributionChart.update('resize');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRice - Reporte Molino</title>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-reporte-molino.css">
+</head>
+<body>
+    <div class="container">
+        <div class="reporte-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a sus reportes</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Section -->
+            <div class="description-section">
+                <p class="description-text">Información detallada de transacciones de sacos de arroz</p>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="summary-stats">
+                <div class="stat-card">
+                    <div class="stat-icon transactions-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10,9 9,9 8,9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">47</div>
+                        <div class="stat-label">Transacciones<br>este mes</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon volume-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27,6.96 12,12.01 20.73,6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">2,847</div>
+                        <div class="stat-label">Sacos<br>procesados</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon revenue-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">S/. 89,420</div>
+                        <div class="stat-label">Ingresos<br>totales</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Section -->
+            <div class="transactions-section">
+                <div class="transactions-header">
+                    <h2 class="section-title">Últimas Transacciones</h2>
+                    <button class="view-all-btn" onclick="viewAllTransactions()">
+                        <span>Ver todas</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="transactions-list">
+                    <div class="transaction-item" data-type="integral">
+                        <div class="transaction-indicator integral"></div>
+                        <div class="transaction-content">
+                            <div class="transaction-header">
+                                <h4 class="transaction-title">Compra #A-2845</h4>
+                                <span class="transaction-amount">S/. 2,400</span>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-datetime">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                    <span>15 Jun 2023 - 10:30 AM</span>
+                                </div>
+                                <div class="transaction-quantity">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    </svg>
+                                    <span>120 sacos - Arroz Integral</span>
+                                </div>
+                            </div>
+                            <div class="transaction-footer">
+                                <span class="transaction-status completed">Completado</span>
+                                <button class="view-details-btn" onclick="viewTransactionDetails('A-2845')">
+                                    <span>Ver detalles</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" data-type="blanco">
+                        <div class="transaction-indicator blanco"></div>
+                        <div class="transaction-content">
+                            <div class="transaction-header">
+                                <h4 class="transaction-title">Compra #A-2844</h4>
+                                <span class="transaction-amount">S/. 1,800</span>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-datetime">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                    <span>14 Jun 2023 - 3:45 PM</span>
+                                </div>
+                                <div class="transaction-quantity">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    </svg>
+                                    <span>90 sacos - Arroz Blanco</span>
+                                </div>
+                            </div>
+                            <div class="transaction-footer">
+                                <span class="transaction-status completed">Completado</span>
+                                <button class="view-details-btn" onclick="viewTransactionDetails('A-2844')">
+                                    <span>Ver detalles</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" data-type="parbolizado">
+                        <div class="transaction-indicator parbolizado"></div>
+                        <div class="transaction-content">
+                            <div class="transaction-header">
+                                <h4 class="transaction-title">Compra #A-2843</h4>
+                                <span class="transaction-amount">S/. 1,200</span>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-datetime">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                    <span>12 Jun 2023 - 9:15 AM</span>
+                                </div>
+                                <div class="transaction-quantity">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    </svg>
+                                    <span>60 sacos - Arroz Parbolizado</span>
+                                </div>
+                            </div>
+                            <div class="transaction-footer">
+                                <span class="transaction-status completed">Completado</span>
+                                <button class="view-details-btn" onclick="viewTransactionDetails('A-2843')">
+                                    <span>Ver detalles</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="transaction-item" data-type="integral">
+                        <div class="transaction-indicator integral"></div>
+                        <div class="transaction-content">
+                            <div class="transaction-header">
+                                <h4 class="transaction-title">Compra #A-2842</h4>
+                                <span class="transaction-amount">S/. 2,000</span>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-datetime">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polyline points="12,6 12,12 16,14"></polyline>
+                                    </svg>
+                                    <span>10 Jun 2023 - 2:20 PM</span>
+                                </div>
+                                <div class="transaction-quantity">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                    </svg>
+                                    <span>100 sacos - Arroz Integral</span>
+                                </div>
+                            </div>
+                            <div class="transaction-footer">
+                                <span class="transaction-status completed">Completado</span>
+                                <button class="view-details-btn" onclick="viewTransactionDetails('A-2842')">
+                                    <span>Ver detalles</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="9,18 15,12 9,6"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter and Search Section -->
+                <div class="filter-search-section">
+                    <div class="search-container">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" placeholder="Buscar por número de compra..." id="searchInput" oninput="searchTransactions()">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all" onclick="filterTransactions('all')">Todos</button>
+                        <button class="filter-btn" data-filter="integral" onclick="filterTransactions('integral')">Integral</button>
+                        <button class="filter-btn" data-filter="blanco" onclick="filterTransactions('blanco')">Blanco</button>
+                        <button class="filter-btn" data-filter="parbolizado" onclick="filterTransactions('parbolizado')">Parbolizado</button>
+                    </div>
+                </div>
+
+                <div class="load-more-section">
+                    <button class="load-more-btn" onclick="loadMoreTransactions()">
+                        <span>Cargar más transacciones</span>
+                        <div class="loading-spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Detalles de Transacción</h3>
+                <button class="close-btn" onclick="closeTransactionModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn secondary" onclick="exportTransaction()">Exportar PDF</button>
+                <button class="modal-btn primary" onclick="closeTransactionModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Menu -->
+    <div id="profileMenu" class="profile-menu">
+        <div class="profile-menu-item" onclick="viewProfile()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Ver Perfil</span>
+        </div>
+        <div class="profile-menu-item" onclick="viewSettings()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"></path>
+            </svg>
+            <span>Configuración</span>
+        </div>
+        <div class="profile-menu-item" onclick="logout()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16,17 21,12 16,7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Cerrar Sesión</span>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        // Datos de ejemplo para las transacciones
+        const transactionData = {
+            'A-2845': {
+                id: 'A-2845',
+                amount: '$2,400',
+                date: '15 Jun 2023 - 10:30 AM',
+                quantity: '120 sacos',
+                type: 'Arroz Integral',
+                status: 'Completado',
+                farmer: 'Juan Pérez',
+                location: 'Finca El Dorado',
+                quality: 'Premium',
+                moisture: '14%',
+                purity: '98%'
+            },
+            'A-2844': {
+                id: 'A-2844',
+                amount: '$1,800',
+                date: '14 Jun 2023 - 3:45 PM',
+                quantity: '90 sacos',
+                type: 'Arroz Blanco',
+                status: 'Completado',
+                farmer: 'María González',
+                location: 'Hacienda San José',
+                quality: 'Estándar',
+                moisture: '13.5%',
+                purity: '96%'
+            },
+            'A-2843': {
+                id: 'A-2843',
+                amount: '$1,200',
+                date: '12 Jun 2023 - 9:15 AM',
+                quantity: '60 sacos',
+                type: 'Arroz Parbolizado',
+                status: 'Completado',
+                farmer: 'Carlos Rodríguez',
+                location: 'Finca La Esperanza',
+                quality: 'Premium',
+                moisture: '12%',
+                purity: '99%'
+            },
+            'A-2842': {
+                id: 'A-2842',
+                amount: '$2,000',
+                date: '10 Jun 2023 - 2:20 PM',
+                quantity: '100 sacos',
+                type: 'Arroz Integral',
+                status: 'Completado',
+                farmer: 'Ana Martínez',
+                location: 'Granja Los Andes',
+                quality: 'Premium',
+                moisture: '13%',
+                purity: '97%'
+            }
+        };
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada
+            setTimeout(() => {
+                document.querySelector('.reporte-container').classList.add('fade-in');
+            }, 100);
+
+            // Animar elementos secuencialmente
+            setTimeout(() => {
+                document.querySelector('.header').classList.add('slide-down');
+            }, 300);
+            
+            setTimeout(() => {
+                document.querySelector('.description-section').classList.add('slide-up');
+            }, 500);
+            
+            setTimeout(() => {
+                document.querySelector('.summary-stats').classList.add('slide-up');
+            }, 700);
+
+            setTimeout(() => {
+                document.querySelector('.transactions-section').classList.add('slide-up');
+            }, 900);
+
+            // Animar tarjetas de estadísticas
+            setTimeout(() => {
+                document.querySelectorAll('.stat-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('slide-in');
+                    }, index * 200);
+                });
+            }, 1000);
+
+            // Animar transacciones
+            setTimeout(() => {
+                document.querySelectorAll('.transaction-item').forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('slide-in');
+                    }, index * 150);
+                });
+            }, 1200);
+
+            // Actualizar fecha actual
+            updateCurrentDate();
+        });
+
+        // Funciones de interacción
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('show');
+        }
+
+        function viewAllTransactions() {
+            showNotification('Mostrando todas las transacciones...', 'info');
+        }
+
+        function viewTransactionDetails(transactionId) {
+            const transaction = transactionData[transactionId];
+            if (!transaction) return;
+
+            document.getElementById('modalTitle').textContent = `Compra ${transaction.id}`;
+            
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="transaction-detail-grid">
+                    <div class="detail-item">
+                        <label>Número de Compra:</label>
+                        <span>${transaction.id}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Monto Total:</label>
+                        <span class="amount-highlight">${transaction.amount}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Fecha y Hora:</label>
+                        <span>${transaction.date}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Cantidad:</label>
+                        <span>${transaction.quantity}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Tipo de Arroz:</label>
+                        <span>${transaction.type}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Estado:</label>
+                        <span class="status-completed">${transaction.status}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Agricultor:</label>
+                        <span>${transaction.farmer}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Ubicación:</label>
+                        <span>${transaction.location}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Calidad:</label>
+                        <span>${transaction.quality}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Humedad:</label>
+                        <span>${transaction.moisture}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Pureza:</label>
+                        <span>${transaction.purity}</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('transactionModal').classList.add('show');
+        }
+
+        function closeTransactionModal() {
+            document.getElementById('transactionModal').classList.remove('show');
+        }
+
+        function exportTransaction() {
+            showNotification('Exportando transacción a PDF...', 'info');
+            setTimeout(() => {
+                showNotification('PDF generado correctamente', 'success');
+            }, 2000);
+        }
+
+        function searchTransactions() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const transactions = document.querySelectorAll('.transaction-item');
+            
+            transactions.forEach(transaction => {
+                const title = transaction.querySelector('.transaction-title').textContent.toLowerCase();
+                if (title.includes(searchTerm)) {
+                    transaction.style.display = 'flex';
+                } else {
+                    transaction.style.display = 'none';
+                }
+            });
+        }
+
+        function filterTransactions(filter) {
+            // Actualizar botones activos
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+
+            // Filtrar transacciones
+            const transactions = document.querySelectorAll('.transaction-item');
+            transactions.forEach(transaction => {
+                if (filter === 'all' || transaction.dataset.type === filter) {
+                    transaction.style.display = 'flex';
+                } else {
+                    transaction.style.display = 'none';
+                }
+            });
+
+            showNotification(`Filtro aplicado: ${filter === 'all' ? 'Todos' : filter}`, 'info');
+        }
+
+        function loadMoreTransactions() {
+            const btn = document.querySelector('.load-more-btn');
+            const spinner = btn.querySelector('.loading-spinner');
+            const text = btn.querySelector('span');
+            
+            btn.disabled = true;
+            spinner.style.display = 'block';
+            text.textContent = 'Cargando...';
+            
+            setTimeout(() => {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                text.textContent = 'Cargar más transacciones';
+                showNotification('Más transacciones cargadas correctamente', 'success');
+            }, 2000);
+        }
+
+        function viewProfile() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Abriendo perfil...', 'info');
+        }
+
+        function viewSettings() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Abriendo configuración...', 'info');
+        }
+
+        function logout() {
+            document.getElementById('profileMenu').classList.remove('show');
+            showNotification('Cerrando sesión...', 'info');
+        }
+
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            document.querySelector('.date').textContent = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar menús al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const profileMenu = document.getElementById('profileMenu');
+            const profileAvatar = document.querySelector('.profile-avatar');
+            
+            if (!profileAvatar.contains(event.target)) {
+                profileMenu.classList.remove('show');
+            }
+        });
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('transactionModal');
+            if (event.target === modal) {
+                closeTransactionModal();
+            }
+        }
+
+        // Efectos de hover en transacciones
+        document.querySelectorAll('.transaction-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+</body>
+</html>

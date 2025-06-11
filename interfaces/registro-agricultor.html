@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido - Registra tu Molino</title>
-    <link rel="stylesheet" href="styles-registro-molino.css">
+    <title>Bienvenido - Regístrate con Nosotros</title>
+    <link rel="stylesheet" href="styles-registro-agricultor.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -14,35 +14,41 @@
         <div class="form-container">
             <div class="header">
                 <h1 class="title">BIENVENIDO</h1>
-                <p class="subtitle">REGISTRA TU MOLINO AQUÍ</p>
+                <p class="subtitle">REGÍSTRATE CON NOSOTROS</p>
             </div>
             
-            <form id="registroMolino" class="form">
+            <form id="registroPersonal" class="form">
                 <div class="input-group">
-                    <label for="razonSocial">
-                        <span class="icon">📄</span>
-                        RAZÓN SOCIAL
+                    <label for="nombres">
+                        <span class="icon">👤</span>
+                        NOMBRES
                     </label>
-                    <input type="text" id="razonSocial" name="razonSocial" required>
-                    <span class="error-message" id="razonSocialError"></span>
+                    <input type="text" id="nombres" name="nombres" required>
+                    <span class="error-message" id="nombresError"></span>
                 </div>
                 
                 <div class="input-group">
-                    <label for="ruc">
-                        <span class="icon">🏢</span>
-                        RUC
+                    <label for="apellidos">
+                        <span class="icon">👤</span>
+                        APELLIDOS
                     </label>
-                    <input type="text" id="ruc" name="ruc" required maxlength="11" pattern="[0-9]{11}">
-                    <span class="error-message" id="rucError"></span>
+                    <input type="text" id="apellidos" name="apellidos" required>
+                    <span class="error-message" id="apellidosError"></span>
                 </div>
                 
-                <div class="input-group">
-                    <label for="nombreComercial">
-                        <span class="icon">🏪</span>
-                        NOMBRE COMERCIAL
+                <div class="input-group codigo-group">
+                    <label for="codigoAgricultor">
+                        <span class="icon">👤</span>
+                        CÓDIGO AGRICULTOR
                     </label>
-                    <input type="text" id="nombreComercial" name="nombreComercial" required>
-                    <span class="error-message" id="nombreComercialError"></span>
+                    <div class="codigo-container">
+                        <input type="text" id="codigoAgricultor" name="codigoAgricultor" required>
+                        <button type="button" id="buscarBtn" class="buscar-btn">
+                            <span class="btn-text">BUSCAR</span>
+                            <span class="btn-loader" id="buscarLoader"></span>
+                        </button>
+                    </div>
+                    <span class="error-message" id="codigoAgricultorError"></span>
                 </div>
                 
                 <div class="section-group">
@@ -77,9 +83,9 @@
                         </div>
                         
                         <div class="input-group">
-                            <label for="direccionDetalle">DIRECCIÓN</label>
-                            <input type="text" id="direccionDetalle" name="direccionDetalle" required>
-                            <span class="error-message" id="direccionDetalleError"></span>
+                            <label for="direccion">DIRECCIÓN</label>
+                            <input type="text" id="direccion" name="direccion" required>
+                            <span class="error-message" id="direccionError"></span>
                         </div>
                     </div>
                 </div>
@@ -92,9 +98,9 @@
                     
                     <div class="nested-inputs">
                         <div class="input-group">
-                            <label for="telefono">NÚMERO DE CONTACTO</label>
-                            <input type="tel" id="telefono" name="telefono" required pattern="[0-9]{9}" maxlength="9">
-                            <span class="error-message" id="telefonoError"></span>
+                            <label for="numeroContacto">NÚMERO DE CONTACTO</label>
+                            <input type="tel" id="numeroContacto" name="numeroContacto" required pattern="[0-9]{9}" maxlength="9">
+                            <span class="error-message" id="numeroContactoError"></span>
                         </div>
                     </div>
                 </div>
@@ -112,13 +118,13 @@
         <div class="modal-content">
             <div class="success-icon">✅</div>
             <h3>¡Registro Exitoso!</h3>
-            <p>Tu molino ha sido registrado correctamente.</p>
+            <p>Tu registro ha sido completado correctamente.</p>
             <button class="modal-btn" onclick="closeSuccessModal()">Continuar</button>
         </div>
     </div>
 
     <script>
-        // Datos completos de ubicaciones del Perú
+        // Datos completos de ubicaciones del Perú (mismo objeto que en la página anterior)
         const ubicaciones = {
             "amazonas": {
                 "nombre": "Amazonas",
@@ -1034,6 +1040,7 @@
         // Variables globales
         let formData = {};
         let isSubmitting = false;
+        let isBuscarLoading = false;
 
         // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
@@ -1041,6 +1048,7 @@
             setupValidation();
             setupLocationSelects();
             populateDepartamentos();
+            setupBuscarButton();
             animateElements();
         });
 
@@ -1058,7 +1066,7 @@
 
         // Inicializar formulario
         function initializeForm() {
-            const form = document.getElementById('registroMolino');
+            const form = document.getElementById('registroPersonal');
             form.addEventListener('submit', handleSubmit);
         }
 
@@ -1070,17 +1078,25 @@
                 input.addEventListener('input', () => clearError(input));
             });
 
-            // Validación especial para RUC
-            const rucInput = document.getElementById('ruc');
-            rucInput.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, '');
-                if (this.value.length === 11) {
-                    validateRUC(this.value);
-                }
+            // Validación especial para nombres y apellidos (solo letras y espacios)
+            const nombresInput = document.getElementById('nombres');
+            const apellidosInput = document.getElementById('apellidos');
+            
+            [nombresInput, apellidosInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    // Permitir solo letras, espacios y algunos caracteres especiales (ñ, tildes)
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+                });
             });
 
-            // Validación para teléfono
-            const telefonoInput = document.getElementById('telefono');
+            // Validación para código agricultor (alfanumérico)
+            const codigoInput = document.getElementById('codigoAgricultor');
+            codigoInput.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            });
+
+            // Validación para teléfono (solo números)
+            const telefonoInput = document.getElementById('numeroContacto');
             telefonoInput.addEventListener('input', function() {
                 this.value = this.value.replace(/[^0-9]/g, '');
             });
@@ -1150,6 +1166,89 @@
             selectElement.disabled = true;
         }
 
+        // Configurar botón de buscar
+        function setupBuscarButton() {
+            const buscarBtn = document.getElementById('buscarBtn');
+            buscarBtn.addEventListener('click', handleBuscarCodigo);
+        }
+
+        // Manejar búsqueda de código
+        async function handleBuscarCodigo() {
+            const codigoInput = document.getElementById('codigoAgricultor');
+            const codigo = codigoInput.value.trim();
+
+            if (!codigo) {
+                showNotification('Ingrese un código de agricultor', 'warning');
+                return;
+            }
+
+            if (codigo.length < 6) {
+                showNotification('El código debe tener al menos 6 caracteres', 'warning');
+                return;
+            }
+
+            setBuscarLoading(true);
+
+            try {
+                // Simular búsqueda en base de datos
+                await simulateBuscarCodigo(codigo);
+                
+                // Simulación de datos encontrados
+                const isFound = Math.random() > 0.3; // 70% de probabilidad de encontrar
+                
+                if (isFound) {
+                    // Autocompletar datos simulados
+                    const datosSimulados = {
+                        nombres: ['Juan Carlos', 'María Elena', 'Pedro José', 'Ana María', 'Luis Alberto'],
+                        apellidos: ['Rodríguez Mendoza', 'García López', 'Martínez Pérez', 'Sánchez Torres', 'Fernández Díaz'],
+                        telefonos: ['987654321', '912345678', '998877665', '955443322', '966778899']
+                    };
+                    
+                    const randomIndex = Math.floor(Math.random() * datosSimulados.nombres.length);
+                    
+                    document.getElementById('nombres').value = datosSimulados.nombres[randomIndex];
+                    document.getElementById('apellidos').value = datosSimulados.apellidos[randomIndex];
+                    document.getElementById('numeroContacto').value = datosSimulados.telefonos[randomIndex];
+                    
+                    showNotification('Datos del agricultor encontrados', 'success');
+                    codigoInput.classList.add('valid');
+                } else {
+                    showNotification('Código de agricultor no encontrado', 'error');
+                    showFieldError(codigoInput, 'Código no encontrado en la base de datos');
+                }
+                
+            } catch (error) {
+                showNotification('Error al buscar el código. Intenta nuevamente.', 'error');
+            } finally {
+                setBuscarLoading(false);
+            }
+        }
+
+        // Simular búsqueda de código
+        function simulateBuscarCodigo(codigo) {
+            return new Promise((resolve) => {
+                setTimeout(resolve, 1500);
+            });
+        }
+
+        // Configurar estado de loading del botón buscar
+        function setBuscarLoading(loading) {
+            isBuscarLoading = loading;
+            const btn = document.getElementById('buscarBtn');
+            const btnText = btn.querySelector('.btn-text');
+            const btnLoader = btn.querySelector('.btn-loader');
+            
+            btn.disabled = loading;
+            btnText.style.display = loading ? 'none' : 'block';
+            btnLoader.style.display = loading ? 'block' : 'none';
+            
+            if (loading) {
+                btn.classList.add('loading');
+            } else {
+                btn.classList.remove('loading');
+            }
+        }
+
         // Validar campo individual
         function validateField(field) {
             const value = field.value.trim();
@@ -1159,32 +1258,39 @@
 
             // Validaciones específicas
             switch(fieldName) {
-                case 'razonSocial':
+                case 'nombres':
                     if (!value) {
-                        errorMessage = 'La razón social es requerida';
+                        errorMessage = 'Los nombres son requeridos';
                         isValid = false;
-                    } else if (value.length < 3) {
-                        errorMessage = 'La razón social debe tener al menos 3 caracteres';
+                    } else if (value.length < 2) {
+                        errorMessage = 'Los nombres deben tener al menos 2 caracteres';
                         isValid = false;
                     }
                     break;
 
-                case 'ruc':
+                case 'apellidos':
                     if (!value) {
-                        errorMessage = 'El RUC es requerido';
+                        errorMessage = 'Los apellidos son requeridos';
                         isValid = false;
-                    } else if (value.length !== 11) {
-                        errorMessage = 'El RUC debe tener 11 dígitos';
-                        isValid = false;
-                    } else if (!validateRUCFormat(value)) {
-                        errorMessage = 'El RUC no tiene un formato válido';
+                    } else if (value.length < 2) {
+                        errorMessage = 'Los apellidos deben tener al menos 2 caracteres';
                         isValid = false;
                     }
                     break;
 
-                case 'telefono':
+                case 'codigoAgricultor':
                     if (!value) {
-                        errorMessage = 'El teléfono es requerido';
+                        errorMessage = 'El código de agricultor es requerido';
+                        isValid = false;
+                    } else if (value.length < 6) {
+                        errorMessage = 'El código debe tener al menos 6 caracteres';
+                        isValid = false;
+                    }
+                    break;
+
+                case 'numeroContacto':
+                    if (!value) {
+                        errorMessage = 'El número de contacto es requerido';
                         isValid = false;
                     } else if (value.length !== 9) {
                         errorMessage = 'El teléfono debe tener 9 dígitos';
@@ -1201,29 +1307,6 @@
 
             showFieldError(field, errorMessage);
             return isValid;
-        }
-
-        // Validar formato de RUC
-        function validateRUCFormat(ruc) {
-            // Validación básica de RUC peruano
-            const firstDigit = parseInt(ruc.charAt(0));
-            return firstDigit === 1 || firstDigit === 2;
-        }
-
-        // Validar RUC completo (simulado)
-        function validateRUC(ruc) {
-            // Simulación de validación con API
-            setTimeout(() => {
-                const rucInput = document.getElementById('ruc');
-                const isValid = Math.random() > 0.3; // 70% de probabilidad de ser válido
-                
-                if (isValid) {
-                    rucInput.classList.add('valid');
-                    showNotification('RUC válido', 'success');
-                } else {
-                    showFieldError(rucInput, 'RUC no encontrado en SUNAT');
-                }
-            }, 1000);
         }
 
         // Mostrar error en campo
@@ -1280,7 +1363,7 @@
                 showSuccessModal();
                 
             } catch (error) {
-                showNotification('Error al registrar el molino. Intenta nuevamente.', 'error');
+                showNotification('Error al registrar. Intenta nuevamente.', 'error');
             } finally {
                 setSubmitLoading(false);
             }
@@ -1328,7 +1411,7 @@
             document.getElementById('successModal').classList.remove('show');
             // Redirigir a la siguiente página
             setTimeout(() => {
-                window.location.href = 'dashboard-molino.html';
+                window.location.href = 'dashboard-agricultor.html';
             }, 300);
         }
 

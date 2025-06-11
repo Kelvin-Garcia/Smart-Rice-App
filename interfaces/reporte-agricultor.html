@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRice - Reporte Agricultor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-reporte-agricultor.css">
+</head>
+<body>
+    <div class="container">
+        <div class="report-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="greeting-section">
+                    <div class="greeting-text">
+                        <h1 class="greeting">HOLA, Bienvenido a reportes</h1>
+                        <p class="date" id="currentDate">Viernes, 30 de junio</p>
+                    </div>
+                </div>
+                <div class="profile-icon">
+                    <div class="profile-avatar">
+                        <div class="avatar-icon">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <h2 class="summary-title">Resumen de tus transacciones de arroz</h2>
+            </div>
+
+            <!-- Transactions Header -->
+            <div class="transactions-header">
+                <h3 class="transactions-title">Transacciones Recientes</h3>
+                <button class="new-sale-btn" onclick="handleNewSale()">
+                    <span class="btn-icon">+</span>
+                    Nueva Venta
+                </button>
+            </div>
+
+            <!-- Transactions List -->
+            <div class="transactions-list" id="transactionsList">
+                <!-- Las transacciones se cargarán dinámicamente -->
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-spinner"></div>
+                <p>Cargando transacciones...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Venta -->
+    <div id="newSaleModal" class="modal">
+        <div class="modal-content">
+            <h3>Nueva Venta</h3>
+            <p>Funcionalidad de nueva venta en desarrollo.</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cerrar</button>
+                <button class="modal-btn confirm" onclick="confirmNewSale()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        // Datos de ejemplo
+        const transactions = [
+            {
+                id: 1,
+                mill: "Molino San Carlos",
+                date: "15 octubre, 2023",
+                quantity: 260,
+                pricePerKg: 20,
+                total: 5200,
+                status: "Pagado"
+            },
+            {
+                id: 2,
+                mill: "Molino El Dorado",
+                date: "8 octubre, 2023",
+                quantity: 290,
+                pricePerKg: 15,
+                total: 4350,
+                status: "Pagado"
+            },
+            {
+                id: 3,
+                mill: "Molino La Esperanza",
+                date: "18 septiembre, 2023",
+                quantity: 340,
+                pricePerKg: 20,
+                total: 6800,
+                status: "Pagado"
+            },
+            {
+                id: 4,
+                mill: "Molino Los Andes",
+                date: "5 septiembre, 2023",
+                quantity: 425,
+                pricePerKg: 20,
+                total: 8500,
+                status: "Pagado"
+            }
+        ];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            loadTransactions();
+            
+            // Animación de entrada
+            setTimeout(() => {
+                document.querySelector('.report-container').classList.add('fade-in');
+            }, 100);
+        });
+
+        // Actualizar fecha
+        function updateDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long'
+            };
+            const dateString = now.toLocaleDateString('es-ES', options);
+            const capitalizedDate = dateString.charAt(0).toUpperCase() + dateString.slice(1);
+            document.getElementById('currentDate').textContent = capitalizedDate;
+        }
+
+        // Cargar transacciones
+        function loadTransactions() {
+            const loadingState = document.getElementById('loadingState');
+            const transactionsList = document.getElementById('transactionsList');
+            
+            // Mostrar loading
+            loadingState.style.display = 'flex';
+            transactionsList.style.display = 'none';
+            
+            // Simular carga
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                transactionsList.style.display = 'block';
+                
+                // Renderizar transacciones
+                renderTransactions();
+                
+                // Animar entrada de transacciones
+                const transactionItems = document.querySelectorAll('.transaction-item');
+                transactionItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('slide-in');
+                    }, index * 150);
+                });
+            }, 1500);
+        }
+
+        // Renderizar transacciones
+        function renderTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            
+            transactionsList.innerHTML = transactions.map(transaction => `
+                <div class="transaction-item" onclick="viewTransaction(${transaction.id})">
+                    <div class="transaction-info">
+                        <div class="mill-info">
+                            <h4 class="mill-name">${transaction.mill}</h4>
+                            <p class="transaction-date">${transaction.date}</p>
+                        </div>
+                        <div class="transaction-details">
+                            <p class="quantity-price">${transaction.quantity} kg • S/${transaction.pricePerKg}/kg</p>
+                        </div>
+                    </div>
+                    <div class="transaction-summary">
+                        <div class="total-amount">S/${transaction.total.toLocaleString()}</div>
+                        <div class="status-badge ${transaction.status.toLowerCase()}">
+                            ${transaction.status}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Manejar nueva venta
+        function handleNewSale() {
+            showNotification('Preparando formulario de nueva venta...', 'info');
+            setTimeout(() => {
+                document.getElementById('newSaleModal').classList.add('show');
+            }, 1000);
+        }
+
+        // Ver transacción
+        function viewTransaction(id) {
+            const transaction = transactions.find(t => t.id === id);
+            showNotification(`Viendo detalles de ${transaction.mill}`, 'info');
+        }
+
+        // Confirmar nueva venta
+        function confirmNewSale() {
+            closeModal();
+            showNotification('Redirigiendo al formulario de venta...', 'success');
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('newSaleModal').classList.remove('show');
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('newSaleModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Actualizar datos cada 30 segundos
+        setInterval(() => {
+            updateDate();
+        }, 30000);
+    </script>
+</body>
+</html>

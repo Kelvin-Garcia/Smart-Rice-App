@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRice - Registro de Rol</title>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-registro-rol.css">
+</head>
+<body>
+    <div class="container">
+        <div class="registration-container">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <div class="plant-icon">
+                            <div class="stem"></div>
+                            <div class="leaves">
+                                <div class="leaf leaf-left"></div>
+                                <div class="leaf leaf-right"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h1 class="app-title">SmartRice</h1>
+                </div>
+            </div>
+
+            <!-- Title Section -->
+            <div class="title-section">
+                <h2 class="main-title">Selecciona tu rol</h2>
+                <p class="subtitle">Elige cómo quieres registrarte en nuestra plataforma</p>
+            </div>
+
+            <!-- Role Selection -->
+            <div class="role-selection">
+                <div class="role-card" data-role="agricultor" onclick="selectRole('agricultor')">
+                    <div class="role-icon">
+                        <div class="agricultor-icon">
+                            <div class="wheat-stem"></div>
+                            <div class="wheat-grains">
+                                <div class="grain"></div>
+                                <div class="grain"></div>
+                                <div class="grain"></div>
+                                <div class="grain"></div>
+                                <div class="grain"></div>
+                                <div class="grain"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="role-title">Agricultor</h3>
+                    <div class="selection-indicator">
+                        <div class="check-icon">✓</div>
+                    </div>
+                </div>
+
+                <div class="role-card" data-role="molino" onclick="selectRole('molino')">
+                    <div class="role-icon">
+                        <div class="molino-icon">
+                            <div class="building-base"></div>
+                            <div class="building-top"></div>
+                            <div class="building-details">
+                                <div class="window"></div>
+                                <div class="window"></div>
+                                <div class="door"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="role-title">Molino</h3>
+                    <div class="selection-indicator">
+                        <div class="check-icon">✓</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Continue Button -->
+            <div class="action-section">
+                <button class="continue-btn" id="continueBtn" onclick="handleContinue()" disabled>
+                    Continuar
+                </button>
+            </div>
+
+            <!-- Login Link -->
+            <div class="login-section">
+                <p class="login-question">¿Ya tienes una cuenta?</p>
+                <a href="#" class="login-link" onclick="handleLogin()">Iniciar sesión</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Selección</h3>
+            <p id="modalMessage">¿Estás seguro de que quieres registrarte como <span id="selectedRoleText"></span>?</p>
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn confirm" onclick="confirmRegistration()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notificación -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        let selectedRole = null;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada
+            setTimeout(() => {
+                document.querySelector('.registration-container').classList.add('fade-in');
+            }, 100);
+
+            // Animar elementos secuencialmente
+            setTimeout(() => {
+                document.querySelector('.logo-section').classList.add('slide-down');
+            }, 300);
+            
+            setTimeout(() => {
+                document.querySelector('.title-section').classList.add('slide-up');
+            }, 500);
+            
+            setTimeout(() => {
+                document.querySelector('.role-selection').classList.add('slide-up');
+            }, 700);
+
+            setTimeout(() => {
+                document.querySelector('.action-section').classList.add('slide-up');
+            }, 900);
+
+            setTimeout(() => {
+                document.querySelector('.login-section').classList.add('slide-up');
+            }, 1100);
+        });
+
+        // Seleccionar rol
+        function selectRole(role) {
+            // Remover selección anterior
+            document.querySelectorAll('.role-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Seleccionar nuevo rol
+            const selectedCard = document.querySelector(`[data-role="${role}"]`);
+            selectedCard.classList.add('selected');
+            
+            selectedRole = role;
+            
+            // Habilitar botón continuar
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = false;
+            continueBtn.classList.add('enabled');
+
+            // Mostrar notificación
+            showNotification(`Has seleccionado: ${role === 'agricultor' ? 'Agricultor' : 'Molino'}`, 'success');
+
+            // Efecto de vibración en la tarjeta seleccionada
+            selectedCard.style.animation = 'cardPulse 0.6s ease-out';
+            setTimeout(() => {
+                selectedCard.style.animation = '';
+            }, 600);
+        }
+
+        // Manejar continuar
+        function handleContinue() {
+            if (!selectedRole) {
+                showNotification('Por favor selecciona un rol primero', 'warning');
+                return;
+            }
+
+            const roleText = selectedRole === 'agricultor' ? 'Agricultor' : 'Molino';
+            document.getElementById('selectedRoleText').textContent = roleText;
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // Confirmar registro
+        function confirmRegistration() {
+        closeModal();
+        showNotification('Redirigiendo al formulario de registro...', 'info');
+        
+        setTimeout(() => {
+            if (selectedRole === 'agricultor') {
+                window.location.href = 'registro-agricultor.html';
+            } else if (selectedRole === 'molino') {
+                window.location.href = 'registro-molino.html';
+            }
+        }, 1200);
+        }
+
+        // Manejar login
+        function handleLogin() {
+            showNotification('Redirigiendo a inicio de sesión...', 'info');
+            setTimeout(() => {
+                showNotification('Funcionalidad de login en desarrollo', 'info');
+            }, 1500);
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Efectos de teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && selectedRole) {
+                handleContinue();
+            } else if (event.key === 'Escape') {
+                closeModal();
+            } else if (event.key === '1') {
+                selectRole('agricultor');
+            } else if (event.key === '2') {
+                selectRole('molino');
+            }
+        });
+
+        function navigateTo(page) {
+            window.location.href = page;
+        }
+
+        // Animación del logo
+        setInterval(() => {
+            const leaves = document.querySelectorAll('.leaf');
+            leaves.forEach(leaf => {
+                leaf.style.animation = 'none';
+                setTimeout(() => {
+                    leaf.style.animation = 'leafSway 2s ease-in-out infinite';
+                }, 10);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
